@@ -8,6 +8,7 @@ import com.mmtap.common.ResultGenerator;
 import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
+import com.mmtap.modules.pat.vo.PatVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,42 +43,7 @@ public class PatController {
      * 前端使用
      */
 
-    //1 年度数量
-    public Object annual(){
-        return null;
-    }
-    //2 专利权利人和其拥有专利数量
-    public Object person(){
-        return null;
-    }
-    //3 主分类的数量对比
-    public Object category(){
-        return null;
-    }
 
-    //4 多重共现网络
-    public Object multiple(){
-        return null;
-    }
-
-    //5 列表显示
-    public Page<Patent> findList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        return findAll(pageable);
-    }
-
-
-    public Object getById(@RequestParam String id){
-        Optional optional = patDao.findById(id);
-        if (optional.isPresent()){
-            return optional.get();
-        }
-        return null;
-    }
-
-    //6 导出
-    public void exepotExce(){
-
-    }
 
     /*
         服务端使用
