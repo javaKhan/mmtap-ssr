@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>通用增删改查</title>
+
+    <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css"
+          rel="stylesheet"/>
+    <link href="/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"/>
+
+    <link href="/plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+    <link href="/plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+    <link href="/plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+
+    <!--select2-->
+    <link href="https://cdn.bootcss.com/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+
+    <link href="/app/css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main">
+    <div id="toolbar">
+        <a class="waves-effect waves-button" href="javascript:;" onclick="importAction()"><i class="zmdi zmdi-plus"></i>
+            导入Excel</a>
+
+    </div>
+    <table id="table"></table>
+</div>
+
+<script src="/plugins/jquery.1.12.4.min.js"></script>
+<script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/plugins/waves-0.7.5/waves.min.js"></script>
+<script src="/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
+
+<!--给form使用-->
+<!-- select2 -->
+<script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
+<script src="https://cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
+
+<!-- InputMask -->
+<script src="/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+
+<script src="/app/js/common.js"></script>
+<script src="/app/js/i-ajax.js"></script>
+<script>
+    var $table = $('#table');
+    $(function () {
+        jconfirm.defaults = {
+            theme: 'material',
+        };
+        // bootstrap table初始化
+        // http://bootstrap-table.wenzhixin.net.cn/zh-cn/documentation/
+        $table.bootstrapTable({
+            url: '/pat/manage/all',
+            height: getHeight(),
+            striped: true,
+            // search: true,
+            searchOnEnterKey: true,
+            showRefresh: true,
+            showToggle: true,
+            showColumns: true,
+            minimumCountColumns: 2,
+//            showPaginationSwitch: true,
+//             clickToSelect: true,
+            pageSize: 20,
+            pageList: [10, 20, 25, 50, 100],
+//            detailView: true,
+//            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            classes: 'table table-hover table-no-bordered',
+            sidePagination: "server",
+            silentSort: false,
+            smartDisplay: false,
+            idField: 'pid',
+            sortName: 'pid',
+            sortOrder: 'asc',
+            escape: true,
+            // maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                // {field: 'state', checkbox: true},
+                {field: 'name', title: '专利名称', sortable: true, align: 'center'},
+                {field: 'publicNo', title: '公开(公告)号', sortable: true, align: 'center'},
+                {field: 'publicDate', title: '公开(公告)日', sortable: true, formatter:'dateFormatter', align: 'center'},
+                {field: 'applyPerson', title: '申请人', sortable: true, align: 'center'},
+                {field: 'ipctypeNo', title: 'IPC分类号', sortable: true, align: 'center'},
+                {field: 'legalEffectiveDate', title: '法律生效日', sortable: false, align: 'center'},
+                {field: 'legalEffectiveMeaning', title: '法律状态含义', sortable: true, align: 'center'},
+                {
+                    field: 'action',
+                    title: '操作',
+                    align: 'center',
+                    formatter: 'detati',
+                    events: 'actionEvents',
+                    clickToSelect: false,
+                    switchable: true,
+                }
+
+            ],
+            queryParams: function (params) {
+                return {
+                    size: params.limit,
+                    page: params.offset / params.limit,
+                    sort: params.sort + ',' + params.order,
+                    username: params.search,
+                };
+            },
+            responseHandler: function (data) {
+                if (data.content) {
+                    return {total: data.totalElements, rows: data.content.map(o => Object.assign(o, o.details))};
+                } else {
+                    $.confirm({
+                        type: 'red',
+                        title: false,
+                        content: '请求数据失败',
+                        autoClose: 'cancel|3000',
+                        backgroundDismiss: true,
+                        buttons: {
+                            confirm: {
+                                text: '确定',
+                                btnClass: 'waves-effect waves-button'
+                            }
+                        }
+                    });
+                    return {total: 0, rows: []};
+                }
+            }
+        }).on('all.bs.table', function (e, name, args) {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
+        });
+    });
+
+    function dateFormatter(date) {
+        return date ? moment(date).format("YYYY-MM-DD") : '-';
+    }
+    function detati(value, row, index) {
+        return [
+            '<a class="detail ml10" href="javascript:void(0)" data-toggle="tooltip" title="专利详情">详情</a>　',
+        ];
+    }
+    
+    function importAction() {
+        console.info("导入");
+    }
+    window.actionEvents = {
+        'click .detail': function (e, value, row, index) {
+            detailDialog(row);
+        },
+    };
+
+    // var href = location.href;
+    function detailDialog(row) {
+        // location.href = href + "#" + row.pid;
+        patDetail = $.dialog({
+            columnClass: 'medium',
+            type: 'blue',
+            animationSpeed: 300,
+            title: '专利详情',
+            content: 'url:/page/pat/detail.html',
+            onContentReady:function () {
+                $("#pid").text(row.pid);
+                $("#name").text(row.name);
+                $("#industry").text(row.industry);
+                $("#applyNo").text(row.applyNo);
+                $("#tongZu").text(row.tongZu);
+                $("#yinZheng").text(row.yinZheng);
+                $("#beiYin").text(row.beiYin);
+                $("#applyDate").text(dateFormatter(row.applyDate));
+                $("#publicNo").text(row.publicNo);
+                $("#publicDate").text(dateFormatter(row.publicDate));
+                $("#ipctypeNo").text(row.ipctypeNo);
+                $("#applyPerson").text(row.applyPerson);
+                $("#inventor").text(row.inventor);
+                $("#priorityNumber").text(row.priorityNumber);
+                $("#priorityDay").text(row.priorityDay);
+                $("#applyPersonAddress").text(row.applyPersonAddress);
+                $("#applyPersonZip").text(row.applyPersonZip);
+                $("#legalEffectiveDate").text(row.legalEffectiveDate);
+                $("#legalEffectiveMeaning").text(row.legalEffectiveMeaning);
+            }
+        });
+    }
+
+    function importAction() {
+        patDetail = $.dialog({
+            columnClass: 'medium',
+            type: 'blue',
+            animationSpeed: 300,
+            title: '文件导入',
+            content: 'url:/page/pat/import.html',
+            onContentReady:function () {
+
+            }
+        });
+    }
+</script>
+</body>
+</html>

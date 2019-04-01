@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/sanji-boot?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=false&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://127.0.0.1:3306/mmtap-ssr?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: root
     password: imkzp.com
     type: com.zaxxer.hikari.HikariDataSource
@@ -18,9 +18,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+  servlet:
+    multipart:
+      max-file-size: 100000000
+      max-request-size: 100000000
 logging:
   level:
     root: info
     org.springframework: info
-    com.sj.boot: debug
+    com.mmtap: debug
