@@ -2,9 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="/plugins/jquery.1.12.4.min.js"></script>
+    <script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="/plugins/vue/2.3.4/vue.min.js"></script>
+    <script src="/plugins/mmtap/chart.js" type="application/javascript"></script>
     <title>Title</title>
 </head>
 <body>
-        专利统计
+    <div id="app">
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active"><a href="#year" data-toggle="tab">年度专利数</a></li>
+            <li><a href="#person" data-toggle="tab">专利权人和其拥有专利数</a></li>
+            <li><a href="#fenlei" data-toggle="tab">专利权人和其拥有专利数</a></li>
+            <li><a href="#wangluo" data-toggle="tab">专利权人和其拥有专利数</a></li>
+
+        </ul>
+
+
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="year">
+                <annual_patents></annual_patents>
+            </div>
+            <div class="tab-pane fade" id="person">
+                <patentee_owned_patents></patentee_owned_patents>
+            </div>
+            <div class="tab-pane fade" id="fenlei">
+                <categories_comparison_analysis></categories_comparison_analysis>
+            </div>
+            <div class="tab-pane fade" id="wangluo">
+                <multiple_network_visualization></multiple_network_visualization>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    var app=new Vue({
+        el:'#app',
+        data:{
+            message:''
+        }
+    })
+</script>
+
+
 </body>
 </html>
