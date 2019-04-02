@@ -116,6 +116,7 @@ public class PatFrontDao {
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
+        sb.append(" LIMIT 300");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;

@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/patents")
@@ -44,10 +41,13 @@ public class FrontController {
         map.put("code",200);
         map.put("message","");
         List d = patService.patentee(vo);
+        List fd = format(d);
+        List warpList = new ArrayList();
         Map wapMap = new HashMap();
         wapMap.put("name","专利持有人");
-        wapMap.put("data",d);
-        map.put("data",wapMap);
+        wapMap.put("data",fd);
+        warpList.add(wapMap);
+        map.put("data",warpList);
         return map;
     }
     //3 主分类的数量对比
@@ -57,11 +57,27 @@ public class FrontController {
             map.put("code",200);
             map.put("message","");
             List d =patService.category(vo);
+            List fd = format(d);
+
+            List warpList = new ArrayList();
             Map wapMap = new HashMap();
             wapMap.put("name","主分类号");
-            wapMap.put("data",d);
-            map.put("data",wapMap);
+            wapMap.put("data",fd);
+            warpList.add(wapMap);
+            map.put("data",warpList);
             return map;
+    }
+
+    private List format(List d) {
+        List l = new ArrayList();
+        for (int i=0;i<d.size();i++){
+            Map m = new HashMap();
+            Object[] o = (Object[])d.get(i);
+            m.put("name",o[0].toString());
+            m.put("value",o[1]);
+            l.add(m);
+        }
+        return l;
     }
 
     //4 多重共现网络
