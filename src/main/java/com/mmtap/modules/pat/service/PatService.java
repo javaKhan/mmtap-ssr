@@ -11,4 +11,12 @@ public interface PatService {
     public void saveImport(List<Patent> pats);
 
     Page list(Pageable pageable, PatVo patVo);
+
+    Object annual(PatVo vo, Pageable pageable);
+
+    Object patentee(PatVo vo, Pageable pageable);
+
+    Object category(PatVo vo, Pageable pageable);
+
+    Object network(PatVo vo, Pageable pageable);
 }

@@ -65,6 +65,7 @@ public class CommonController {
      */
     private List split(List<IPC> list) {
         List ipcList = new ArrayList();
+
         for (int i=0;i<list.size();i++){
             IPC ipc = list.get(i);
             if (StringUtils.isEmpty(ipc.getPc())){
@@ -80,6 +81,7 @@ public class CommonController {
                         ipCvo.getChild().add(chVo);
                     }
                 }
+                ipcList.add(ipCvo);
             }
         }
 

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,31 +28,46 @@ public class FrontController {
 
 
     //1 年度数量
-    @RequestMapping("/year")
+    @RequestMapping("/annual")
     public Object annual(PatVo vo, Pageable pageable){
-        return null;
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        map.put("data",patService.annual(vo,pageable));
+        return map;
     }
     //2 专利权利人和其拥有专利数量
-    @RequestMapping("/person")
+    @RequestMapping("/patentee")
     public Object person(PatVo vo,Pageable pageable){
-        return null;
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        map.put("data",patService.patentee(vo,pageable));
+        return map;
     }
     //3 主分类的数量对比
-    @RequestMapping("/category")
+    @RequestMapping("/categories_comparsion")
     public Object category(PatVo vo,Pageable pageable){
-        return null;
+            Map map = new HashMap();
+            map.put("code",200);
+            map.put("message","");
+            map.put("data",patService.category(vo,pageable));
+            return map;
     }
 
     //4 多重共现网络
-    @RequestMapping("/multipe")
-    public Object multiple(PatVo vo,Pageable pageable){
-        return null;
+    @RequestMapping("/network")
+    public Object network(PatVo vo,Pageable pageable){
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        map.put("data",patService.network(vo,pageable));
+        return map;
     }
 
     //5 列表显示
     @RequestMapping("/list")
     public Page<Patent> findList(@RequestParam(defaultValue = "20") int limit ,@RequestParam(defaultValue = "0") int offset,PatVo patVo){
-        //@PageableDefault(sort = "id", direction = Sort.Direction.DESC,value = ) Pageable pageable
         Pageable pageable = getPageable(limit,offset,"pid");
         Page page = patService.list(pageable,patVo);
         return page;
