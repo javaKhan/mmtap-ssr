@@ -1,16 +1,26 @@
 package com.mmtap.modules.pat.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.mmtap.modules.pat.dao.IPCDao;
+import com.mmtap.modules.pat.model.IPC;
+import com.mmtap.modules.pat.vo.IPCvo;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/common")
 public class CommonController {
+    @Autowired
+    private IPCDao ipcDao;
+
     @RequestMapping("/years")
     public Object getYears(){
         Map map = new HashMap();
@@ -35,5 +45,44 @@ public class CommonController {
         JSON json = JSON.parseObject(citys);
         map.put("data",json);
         return map;
+    }
+
+    @RequestMapping("/ipc")
+    public Object getIpc(){
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        List list = ipcDao.findAll();
+        List ipc = split(list);
+        map.put("data",ipc);
+        return map;
+    }
+
+    /**
+     * 生成ipc 类型 数据结构
+     * @param list
+     * @return
+     */
+    private List split(List<IPC> list) {
+        List ipcList = new ArrayList();
+        for (int i=0;i<list.size();i++){
+            IPC ipc = list.get(i);
+            if (StringUtils.isEmpty(ipc.getPc())){
+                IPCvo ipCvo = new IPCvo();
+                ipCvo.setName(ipc.getName());
+                ipCvo.setCode(ipc.getCode());
+                for (int j=0;j<list.size();j++){
+                    IPC ch = list.get(j);
+                    if (StringUtils.isNotEmpty(ch.getPc()) && ipc.getCode().equals(ch.getPc())){
+                        IPCvo chVo = new IPCvo();
+                        ipCvo.setName(ipc.getName());
+                        ipCvo.setCode(ipc.getCode());
+                        ipCvo.getChild().add(chVo);
+                    }
+                }
+            }
+        }
+
+        return ipcList;
     }
 }
