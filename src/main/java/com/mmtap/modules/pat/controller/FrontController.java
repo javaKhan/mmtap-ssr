@@ -29,39 +29,39 @@ public class FrontController {
 
     //1 年度数量
     @RequestMapping("/annual")
-    public Object annual(PatVo vo, Pageable pageable){
+    public Object annual(PatVo vo){
         Map map = new HashMap();
         map.put("code",200);
         map.put("message","");
-        map.put("data",patService.annual(vo,pageable));
+        map.put("data",patService.annual(vo));
         return map;
     }
     //2 专利权利人和其拥有专利数量
     @RequestMapping("/patentee")
-    public Object person(PatVo vo,Pageable pageable){
+    public Object person(PatVo vo){
         Map map = new HashMap();
         map.put("code",200);
         map.put("message","");
-        map.put("data",patService.patentee(vo,pageable));
+        map.put("data",patService.patentee(vo));
         return map;
     }
     //3 主分类的数量对比
     @RequestMapping("/categories_comparsion")
-    public Object category(PatVo vo,Pageable pageable){
+    public Object category(PatVo vo){
             Map map = new HashMap();
             map.put("code",200);
             map.put("message","");
-            map.put("data",patService.category(vo,pageable));
+            map.put("data",patService.category(vo));
             return map;
     }
 
     //4 多重共现网络
     @RequestMapping("/network")
-    public Object network(PatVo vo,Pageable pageable){
+    public Object network(PatVo vo){
         Map map = new HashMap();
         map.put("code",200);
         map.put("message","");
-        map.put("data",patService.network(vo,pageable));
+        map.put("data",patService.network(vo));
         return map;
     }
 

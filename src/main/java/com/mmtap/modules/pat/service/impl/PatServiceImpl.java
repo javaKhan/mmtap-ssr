@@ -1,6 +1,7 @@
 package com.mmtap.modules.pat.service.impl;
 
 import com.mmtap.modules.pat.dao.PatDao;
+import com.mmtap.modules.pat.dao.PatFrontDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
 import com.mmtap.modules.pat.vo.PatVo;
@@ -17,13 +18,15 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class PatServiceImpl implements PatService {
     @Autowired
     private PatDao patDao;
+
+    @Autowired
+    private PatFrontDao patFrontDao;
 
     @Transactional
     public void saveImport(List<Patent> pats){
@@ -59,22 +62,23 @@ public class PatServiceImpl implements PatService {
 
 
     @Override
-    public Object annual(PatVo vo, Pageable pageable) {
-        return null;
+    public Object annual(PatVo vo) {
+        List list =  patFrontDao.annual(vo);
+        return list ;
     }
 
     @Override
-    public Object patentee(PatVo vo, Pageable pageable) {
-        return null;
+    public Object patentee(PatVo vo) {
+        return patFrontDao.patentee(vo);
     }
 
     @Override
-    public Object category(PatVo vo, Pageable pageable) {
-        return null;
+    public Object category(PatVo vo) {
+        return patFrontDao.category(vo);
     }
 
     @Override
-    public Object network(PatVo vo, Pageable pageable) {
-        return null;
+    public Object network(PatVo vo) {
+        return patFrontDao.network(vo);
     }
 }
