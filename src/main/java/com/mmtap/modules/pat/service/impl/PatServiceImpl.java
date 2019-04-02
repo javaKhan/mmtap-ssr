@@ -62,23 +62,23 @@ public class PatServiceImpl implements PatService {
 
 
     @Override
-    public Object annual(PatVo vo) {
+    public List annual(PatVo vo) {
         List list =  patFrontDao.annual(vo);
         return list ;
     }
 
     @Override
-    public Object patentee(PatVo vo) {
+    public List patentee(PatVo vo) {
         return patFrontDao.patentee(vo);
     }
 
     @Override
-    public Object category(PatVo vo) {
+    public List category(PatVo vo) {
         return patFrontDao.category(vo);
     }
 
     @Override
-    public Object network(PatVo vo) {
+    public List network(PatVo vo) {
         return patFrontDao.network(vo);
     }
 }

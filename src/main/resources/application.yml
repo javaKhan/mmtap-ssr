@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,7 +17,7 @@ spring:
       maximum-pool-size: 20
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   servlet:
     multipart:
@@ -27,3 +28,5 @@ logging:
     root: info
     org.springframework: info
     com.mmtap: debug
+server:
+  port: 8800

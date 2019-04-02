@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,7 +43,11 @@ public class FrontController {
         Map map = new HashMap();
         map.put("code",200);
         map.put("message","");
-        map.put("data",patService.patentee(vo));
+        List d = patService.patentee(vo);
+        Map wapMap = new HashMap();
+        wapMap.put("name","专利持有人");
+        wapMap.put("data",d);
+        map.put("data",wapMap);
         return map;
     }
     //3 主分类的数量对比
@@ -51,7 +56,11 @@ public class FrontController {
             Map map = new HashMap();
             map.put("code",200);
             map.put("message","");
-            map.put("data",patService.category(vo));
+            List d =patService.category(vo);
+            Map wapMap = new HashMap();
+            wapMap.put("name","主分类号");
+            wapMap.put("data",d);
+            map.put("data",wapMap);
             return map;
     }
 

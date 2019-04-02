@@ -12,11 +12,11 @@ public interface PatService {
 
     Page list(Pageable pageable, PatVo patVo);
 
-    Object annual(PatVo vo);
+    List annual(PatVo vo);
 
-    Object patentee(PatVo vo);
+    List patentee(PatVo vo);
 
-    Object category(PatVo vo);
+    List category(PatVo vo);
 
-    Object network(PatVo vo);
+    List network(PatVo vo);
 }
