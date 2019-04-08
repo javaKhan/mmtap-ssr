@@ -1,5 +1,7 @@
 package com.mmtap.modules.pat.controller;
 
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
@@ -13,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -115,8 +121,16 @@ public class FrontController {
 
     //6 导出
     @RequestMapping("/export")
-    public void exepotExce(PatVo patVo){
-
+    public void exepotExce(HttpServletResponse response,PatVo patVo) throws IOException {
+        List dataList = patService.exportExcel(patVo);
+        ExcelWriter writer = ExcelUtil.getWriter();
+        writer.write(dataList);
+        String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition","attachment;filename=excel-"+fileName+".xls");
+        ServletOutputStream out=response.getOutputStream();
+        writer.flush(out);
+        writer.close();
     }
 
 

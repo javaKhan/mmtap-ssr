@@ -17,8 +17,8 @@
 
     <!--select2-->
     <link href="https://cdn.bootcss.com/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-
     <link href="/app/css/common.css" rel="stylesheet"/>
+
 </head>
 <body>
 <div id="main">
@@ -54,6 +54,7 @@
                                 </select>
                             </div>
                              <button type="button" class="btn btn-small btn-default queryButton">查询</button>
+                             <button type="button" class="btn btn-small btn-default exportButton">导出EXCEL</button>
                         </div>
                     </form>
                 </div>
@@ -81,7 +82,7 @@
 <script src="/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-
+<script src="/plugins/mmtap/jquery.fileDownload.js"></script>
 <script src="/app/js/common.js"></script>
 <script src="/app/js/i-ajax.js"></script>
 <script>
@@ -245,6 +246,26 @@
     $(document).on('click', ".queryButton",function(){
         $('#table').bootstrapTable('refresh');
     });
+    $(document).on('click', ".exportButton",function(){
+        $.fileDownload("/patents/export",{
+            data:{
+                level1:$("#level1").val(),
+                level2:$("#level2").val(),
+                province:$("#province").val(),
+                city:$("#city").val(),
+            },
+            prepareCallback:function(url){
+                alert("正在导出,请稍后...");
+            },
+            successCallback:function(url){
+                alert("导出完成！");
+            },
+            failCallback:function (html, url) {
+                alert("导出失败，未知的异常。");
+            }
+        });
+    });
+
     $(document).ready(function () {
         //行业分类
         $.getJSON("/common/ipc",function (res) {
@@ -304,9 +325,7 @@
                 // console.info("选择了空省份");
                 $("#city").empty().append("<option value=''>城市</option>");
             }
-
         });
-
 
     })
 </script>

@@ -19,4 +19,6 @@ public interface PatService {
     List category(PatVo vo);
 
     List network(PatVo vo);
+
+    List exportExcel(PatVo patVo);
 }

@@ -81,4 +81,30 @@ public class PatServiceImpl implements PatService {
     public List network(PatVo vo) {
         return patFrontDao.network(vo);
     }
+
+    @Override
+    public List exportExcel(PatVo patVo) {
+        Specification specification = new Specification() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+
+                if (StringUtils.isNotEmpty(patVo.getLevel1())){
+                    predicates.add(criteriaBuilder.like(root.<String>get("IPCTypeNo"), "%" + patVo.getLevel1() + "%"));
+                }
+                if (StringUtils.isNotEmpty(patVo.getLevel2())){
+                    predicates.add(criteriaBuilder.like(root.<String>get("IPCTypeNo"), "%" + patVo.getLevel2() + "%"));
+                }
+                if (StringUtils.isNotEmpty(patVo.getProvince())){
+                    predicates.add(criteriaBuilder.like(root.<String>get("applyPersonAddress"), "%" + patVo.getProvince() + "%"));
+                }
+                if (StringUtils.isNotEmpty(patVo.getCity())){
+                    predicates.add(criteriaBuilder.like(root.<String>get("applyPersonAddress"), "%" + patVo.getCity() + "%"));
+                }
+                query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+                return null;
+            }
+        };
+        return patDao.findAll(specification);
+    }
 }
