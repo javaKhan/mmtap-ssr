@@ -63,6 +63,7 @@ public class PatFrontDao {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" group by apply_person ");
+        sb.append(" LIMIT 300");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;
@@ -90,6 +91,7 @@ public class PatFrontDao {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" GROUP BY ipctype_no ");
+        sb.append(" LIMIT 300");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;

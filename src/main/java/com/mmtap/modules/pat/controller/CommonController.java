@@ -74,10 +74,10 @@ public class CommonController {
                 ipCvo.setCode(ipc.getCode());
                 for (int j=0;j<list.size();j++){
                     IPC ch = list.get(j);
-                    if (StringUtils.isNotEmpty(ch.getPc()) && ipc.getCode().equals(ch.getPc())){
+                    if (StringUtils.isNotEmpty(ch.getPc()) && ipCvo.getCode().equals(ch.getPc())){
                         IPCvo chVo = new IPCvo();
-                        ipCvo.setName(ipc.getName());
-                        ipCvo.setCode(ipc.getCode());
+                        chVo.setName(ch.getName());
+                        chVo.setCode(ch.getCode());
                         ipCvo.getChild().add(chVo);
                     }
                 }

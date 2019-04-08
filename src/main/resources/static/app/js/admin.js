@@ -254,7 +254,7 @@ function fullPage() {
 function loginVerify() {
     setTimeout(function(){
         var $iframe_title = $('.content_main .cur iframe').contents().find('title').html();
-        console.log($iframe_title)
+        // console.log($iframe_title)
         if ($iframe_title == '登录页') {
             window.top.location.reload();
         }

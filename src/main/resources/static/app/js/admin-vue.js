@@ -122,9 +122,9 @@ var util = {
             var result = [];
             datas.forEach(function (obj) {
                 if (obj.id == id) {
-                    console.log(obj)
+                    // console.log(obj)
                     result = obj.children;
-                    console.log(result)
+                    // console.log(result)
                     if (result) {
                         result.forEach(function (item) {
                             item.title = item.name;
@@ -142,7 +142,7 @@ var util = {
                     }
                 }
             })
-            console.log(result);
+            // console.log(result);
             fc(result);
         });
     },
@@ -159,7 +159,7 @@ var util = {
     },
     getCurrentUser: function (fc) {
         iGet('/api/users/current', function (userName) {
-            console.log('userName',userName);
+            // console.log('userName',userName);
             fc(userName);
         })
     },
@@ -213,7 +213,7 @@ var vue = new Vue({
             console.log(q);
         },
         open_tab: function (title, url) {
-            console.log(title, url)
+            // console.log(title, url)
             Tab.addTab(title, url)
         }
     }
