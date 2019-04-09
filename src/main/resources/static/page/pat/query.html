@@ -132,7 +132,6 @@
                 {field: 'legalEffectiveMeaning', title: '法律状态含义', sortable: true, align: 'center'},
                 {
                     field: 'action',
-                    width: 120,
                     title: '操作',
                     align: 'center',
                     formatter: 'detati',
@@ -185,7 +184,7 @@
     }
     function detati(value, row, index) {
         return [
-            '<a class="detail ml10" href="javascript:void(0)" data-toggle="tooltip" title="专利详情">详情</a>　',
+            '<a class="detail ml10" href="javascript:void(0)" data-toggle="tooltip" style="display:inline-block;width: 30px" title="专利详情">详情</a>　',
         ];
     }
 

@@ -23,7 +23,7 @@
 <body>
 <div id="main">
     <div id="toolbar">
-        <a class="waves-effect waves-button" href="javascript:;" onclick="importAction()"><i class="zmdi zmdi-plus"></i>
+        <a class="btn btn-default waves-effect " href="javascript:;" onclick="importAction()"><i class="zmdi zmdi-plus"></i>
             导入Excel</a>
 
     </div>
@@ -98,7 +98,6 @@
                 {
                     field: 'action',
                     title: '操作',
-                    width: 100,
                     align: 'center',
                     formatter: 'detati',
                     events: 'actionEvents',
@@ -146,7 +145,7 @@
     }
     function detati(value, row, index) {
         return [
-            '<a class="detail ml10" href="javascript:void(0)" data-toggle="tooltip" title="专利详情">详情</a>　',
+            '<a class="detail ml10" style="display:inline-block;"  href="javascript:void(0)" data-toggle="tooltip" title="专利详情">详情</a>　',
         ];
     }
     
