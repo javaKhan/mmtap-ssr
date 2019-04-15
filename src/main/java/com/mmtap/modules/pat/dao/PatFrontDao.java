@@ -43,7 +43,8 @@ public class PatFrontDao {
 
     public List patentee(PatVo vo) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" select apply_person as person,count(*) as sum from patent where 1=1 ");
+        sb.append(" select apply_person as person,count(*) as sum from patent where 1=1 " +
+                " and apply_person is not NULL and apply_person<>''");
         if (StringUtils.isNotEmpty(vo.getLevel1())) {
             sb.append(" and ipctype_no like  '%" + vo.getLevel1().trim() + "%' ");
         }
@@ -63,7 +64,7 @@ public class PatFrontDao {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" group by apply_person ");
-        sb.append(" LIMIT 300");
+        sb.append(" LIMIT 50");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;
@@ -71,7 +72,8 @@ public class PatFrontDao {
 
     public List category(PatVo vo) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" select ipctype_no as ipc ,COUNT(*) as sum from patent where 1=1 ");
+        sb.append(" select ipctype_no as ipc ,COUNT(*) as sum from patent where 1=1 " +
+                " and ipctype_no is not null and ipctype_no<>'' ");
         if (StringUtils.isNotEmpty(vo.getLevel1())) {
             sb.append(" and ipctype_no like  '%" + vo.getLevel1().trim() + "%' ");
         }
@@ -91,7 +93,7 @@ public class PatFrontDao {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" GROUP BY ipctype_no ");
-        sb.append(" LIMIT 300");
+        sb.append(" LIMIT 100");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;

@@ -1,16 +1,19 @@
 package com.mmtap.modules.pat.controller;
 
+import cn.hutool.json.JSONUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
+import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +22,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/patents")
@@ -48,12 +53,7 @@ public class FrontController {
         map.put("message","");
         List d = patService.patentee(vo);
         List fd = format(d);
-        List warpList = new ArrayList();
-        Map wapMap = new HashMap();
-        wapMap.put("name","专利持有人");
-        wapMap.put("data",fd);
-        warpList.add(wapMap);
-        map.put("data",warpList);
+        map.put("data",fd);
         return map;
     }
     //3 主分类的数量对比
@@ -64,13 +64,7 @@ public class FrontController {
             map.put("message","");
             List d =patService.category(vo);
             List fd = format(d);
-
-            List warpList = new ArrayList();
-            Map wapMap = new HashMap();
-            wapMap.put("name","主分类号");
-            wapMap.put("data",fd);
-            warpList.add(wapMap);
-            map.put("data",warpList);
+            map.put("data",fd);
             return map;
     }
 
@@ -85,6 +79,112 @@ public class FrontController {
         }
         return l;
     }
+
+    //3.1 主分类号，公开日
+    // http://patents.weilaigongzuo.com/patents/analysis_categories
+    @RequestMapping("/analysis_categories")
+    public Object analysis_categories(){
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        List cat = patService.getTop(6);
+        List<CatVo> sl = patService.analysis_categories(cat);
+
+        Map dataMap = formatAC(cat,sl);
+        map.put("data",dataMap);
+        return map;
+    }
+
+    /**
+     * 直方图数据格式化
+     * @param cat
+     * @param sl
+     * @return
+     */
+    private Map formatAC(List cat,List sl) {
+        Map dataMap = new HashMap();
+        if (ObjectUtils.isEmpty(cat)||ObjectUtils.isEmpty(sl)){
+            return dataMap;
+        }
+
+        //类型生成
+        dataMap.put("categories",cat);
+        List<Map> seriesData = new ArrayList();
+        //数据生成
+        List<CatVo> catVos = createObj(sl); //转成对象处理
+
+        int currentYear = LocalDate.now().getYear();
+        int year = currentYear-10; //开始年确定
+        while (year<currentYear){
+            //这一年==>6个类型的==>具体数量
+            Map seriesItem = new HashMap();
+            seriesItem.put("name",year);
+            final String tempYear = year+"";
+            List seriesItemValue = new ArrayList();
+            for (Object ipc :cat){
+                List<CatVo> item = catVos.stream()
+                        .filter(o -> ipc.toString().equals(o.getIpc()) && o.getNian().equals(tempYear))
+                        .collect(Collectors.toList());
+                if (!ObjectUtils.isEmpty(item)){
+                    seriesItemValue.add(item.get(0).getCou());
+                }else {
+                    seriesItemValue.add(0);
+                }
+            }
+            seriesItem.put("data",seriesItemValue);
+
+            seriesData.add(seriesItem);
+            year = year+1;
+        }
+        dataMap.put("series",seriesData);
+        return  dataMap;
+    }
+
+    private List<CatVo> createObj(List sl){
+        List result = new ArrayList();
+        for (int x = 0;x<sl.size();x++){
+            if (ObjectUtils.isEmpty(sl.get(x))){
+                continue;
+            }
+            Object[] o = (Object[]) sl.get(x);
+            CatVo catVo = new CatVo();
+            catVo.setIpc(Optional.ofNullable(o[0]).isPresent()?o[0].toString():"");
+            catVo.setNian(Optional.ofNullable(o[1]).isPresent()?o[1].toString():"");
+            catVo.setCou(Optional.ofNullable(o[2]).isPresent()? Integer.valueOf(o[2].toString()):0);
+            result.add(catVo);
+
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param cat
+     * @param se
+     * @return
+     */
+    private Map findItem(String cat,List se){
+        Map map = new HashMap();
+
+        return map;
+    }
+
+
+    /**
+     * 多重共线网络可视化
+     * analysis_categories_network
+     * @return
+     */
+    @RequestMapping("/analysis_categories_network")
+    public Object analysis_categories_network(){
+        Map map = new HashMap();
+        map.put("code",200);
+        map.put("message","");
+        List sd = patService.analysis_categories_network();
+        map.put("data",sd);
+        return map;
+    }
+
 
     //4 多重共现网络
     @RequestMapping("/network")

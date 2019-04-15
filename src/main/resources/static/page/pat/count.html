@@ -5,11 +5,24 @@
     <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="/plugins/jquery.1.12.4.min.js"></script>
     <script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
-    <script src="https://p1.topproio.com/highcharts.js"></script>
+    <script src="https://p1.topproio.com/highchart_7.1.1.js"></script>
     <script src="https://p1.topproio.com/highchartsmore.js"></script>
-    <script src="https://p1.topproio.com/networkgraph.js"></script>
+    <script src="https://p1.topproio.com/highchart_7.1.1_network.js"></script>
+    <script src="https://p1.topproio.com/highcharts_export_7.1.1.js"></script>
     <script src="/plugins/vue/2.3.4/vue.min.js"></script>
     <script src="/plugins/mmtap/chart.js" type="application/javascript"></script>
+    <style>
+        .box_line{
+            display: flex;
+            align-items: center;
+            font-size: small;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .input_query{
+            width: 100px;
+        }
+    </style>
     <title>Title</title>
 </head>
 <body>
@@ -17,14 +30,26 @@
         <ul id="myTab" class="nav nav-tabs">
             <li class="active"><a href="#year" data-toggle="tab">年度专利数</a></li>
             <li><a href="#person" data-toggle="tab">专利权人和其拥有专利数</a></li>
-            <li><a href="#fenlei" data-toggle="tab">专利权人和其拥有专利数</a></li>
-            <li><a href="#wangluo" data-toggle="tab">专利权人和其拥有专利数</a></li>
+            <li><a href="#fenlei" data-toggle="tab">主分类的数量比对以及数量分析</a></li>
+            <li><a href="#wangluo" data-toggle="tab">多重共现网络可视化</a></li>
 
         </ul>
-
-
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade in active" id="year">
+                <div class="container-fluid">
+                    <div class="row box_line">
+                        <span class="col-md-01" style="margin:0 15px">行业</span>
+                        <select class="col-md-01 form-control input_query"><option value="">一级分类</option></select></span>
+                        <select class="form-control input_query"><option value="">二级分类</option></select></span>
+                        <span style="margin:0 15px">地区</span>
+                        <select class="form-control input_query"><option value="">省</option></select></span>
+                        <select class="form-control input_query"><option value="">市</option></select></span>
+                        <span style="margin:0 15px">年限</span>
+                        <select class="form-control input_query"><option value="">年</option></select>
+                        <select class="form-control input_query"><option value="">年</option></select>
+                        <button class="btn btn-default" style="margin-left: 15px">查询</button>
+                    </div>
+                </div>
                 <annual_patents></annual_patents>
             </div>
             <div class="tab-pane fade" id="person">
@@ -32,6 +57,9 @@
             </div>
             <div class="tab-pane fade" id="fenlei">
                 <categories_comparison_analysis></categories_comparison_analysis>
+                <!--<analysis_categories></analysis_categories>-->
+                <!--<analysis_categories_network></analysis_categories_network>-->
+
             </div>
             <div class="tab-pane fade" id="wangluo">
                 <multiple_network_visualization></multiple_network_visualization>

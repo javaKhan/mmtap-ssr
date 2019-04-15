@@ -4,6 +4,7 @@ import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.dao.PatFrontDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
+import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -106,5 +108,22 @@ public class PatServiceImpl implements PatService {
             }
         };
         return patDao.findAll(specification);
+    }
+
+
+    @Override
+    public List analysis_categories_network() {
+        return patDao.analysis_categories_network();
+    }
+
+    @Override
+    public List getTop(int i) {
+        return patDao.getTopIPC(i);
+    }
+
+    @Override
+    public List analysis_categories(List cat) {
+        List res = patDao.analysis_categories(cat);
+        return res;
     }
 }

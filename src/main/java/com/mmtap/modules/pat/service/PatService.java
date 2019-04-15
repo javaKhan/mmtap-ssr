@@ -21,4 +21,10 @@ public interface PatService {
     List network(PatVo vo);
 
     List exportExcel(PatVo patVo);
+
+    List analysis_categories_network();
+
+    List getTop(int i);
+
+    List analysis_categories(List cat);
 }

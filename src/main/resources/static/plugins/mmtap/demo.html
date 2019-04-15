@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    body{
+      margin: 0;
+      background: #E9EEF3;
+    }
+
+    .el-header{
+      background-color: #B3C0D1;
+      color: #333;
+      text-align: center;
+      height: 60px;
+    }
+
+    .el-aside, .el-main{
+      min-height: calc(100vh - 80px);
+    }
+    
+    .el-aside {
+      background-color: #fff;
+      color: #333;
+      text-align: center;
+    }
+    
+    .el-main {
+      background-color: #fff;
+      color: #333;
+      text-align: center;
+    }
+
+    .main-container{
+      width: 1200px;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+
+    .el-menu-vertical{
+      text-align: left;
+      min-height: calc(100vh - 80px);
+    }
+
+    .el-form--inline .el-form-item__content{
+      width: 100px;
+    }
+
+    .layout-left{
+      text-align: left;
+    }
+
+    .layout-right{
+      text-align: right;
+    }
+
+    .el-pagination{
+      margin-top: 60px;
+    }
+
+    .el-menu--horizontal.el-menu{
+      margin-bottom: 20px;
+    }
+
+    .el-header{
+      text-align: left;
+    }
+
+    .header-wrap{
+      width: 1200px;
+      margin: 0 auto;
+      height: 60px;
+      line-height: 60px;
+      padding-left: 20px;
+      vertical-align: middle;
+    }
+
+    .header_logo{
+      display: inline-block;
+      background: #ccc;
+      width: 100px;
+      height: 30px;
+      vertical-align: middle;
+    }
+
+    .header_title{
+      color: #000;
+      font-size: 16px;
+      vertical-align: middle;
+    }
+
+    #spinnerWrap{
+      z-index: 99;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+
+    .spinner {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 50px;
+      height: 60px;
+      margin-left: -25px;
+      margin-top: -30px;
+      text-align: center;
+      font-size: 10px;
+    }
+    
+    .spinner > div {
+      background-color: #67CF22;
+      height: 100%;
+      width: 6px;
+      display: inline-block;
+      
+      -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+      animation: stretchdelay 1.2s infinite ease-in-out;
+    }
+    
+    .spinner .rect2 {
+      -webkit-animation-delay: -1.1s;
+      animation-delay: -1.1s;
+    }
+    
+    .spinner .rect3 {
+      -webkit-animation-delay: -1.0s;
+      animation-delay: -1.0s;
+    }
+    
+    .spinner .rect4 {
+      -webkit-animation-delay: -0.9s;
+      animation-delay: -0.9s;
+    }
+    
+    .spinner .rect5 {
+      -webkit-animation-delay: -0.8s;
+      animation-delay: -0.8s;
+    }
+    
+    @-webkit-keyframes stretchdelay {
+      0%, 40%, 100% { -webkit-transform: scaleY(0.4) } 
+      20% { -webkit-transform: scaleY(1.0) }
+    }
+    
+    @keyframes stretchdelay {
+      0%, 40%, 100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+      }  20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+      }
+    }
+
+    .demo-table-expand{
+      text-align: left;
+    }
+
+    .demo-table-expand .el-form-item{
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 50%;
+    }
+
+    .demo-table-expand .el-form-item__label{
+      width: 160px;
+      white-space: nowrap;
+    }
+
+    .demo-table-expand .el-form-item__content{
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="spinnerWrap">
+    <div class="spinner">
+      <div class="rect1"></div>
+      <div class="rect2"></div>
+      <div class="rect3"></div>
+      <div class="rect4"></div>
+      <div class="rect5"></div>
+    </div>
+  </div>
+
+  <div id="app">
+    <el-container>
+      <el-header>
+          <h1 class="header-wrap">
+            <span class="header_logo"></span>
+            <span class="header_title">中国知识产权专利查询统计平台</span>
+          </h1>
+      </el-header>
+      <el-container class="main-container">
+        <el-aside width="200px">
+          <el-menu class="el-menu-vertical" router>
+            <el-menu-item index="/statistical">
+              <i class="el-icon-menu"></i>
+              <span slot="title">统计</span>
+            </el-menu-item>
+            <el-menu-item index="/patents">
+              <i class="el-icon-document"></i>
+              <span slot="title">专利查询</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
+        <el-container>
+          <el-main>
+            <router-view></router-view>
+          </el-main>
+        </el-container>
+      </el-container>
+    </el-container>
+  </div>
+</body>
+  <!-- import Vue before Element -->
+  <script src="https://p1.topproio.com/vue.min.js"></script>
+  <!-- import JavaScript -->
+  <script src="https://p1.topproio.com/element.js"></script>
+  <!-- import Vue router -->
+  <script src="https://p1.topproio.com/vue-router.js"></script>
+  <!-- import charts component -->
+  <script src="https://p1.topproio.com/highchart_7.1.1.js"></script>
+  <script src="https://p1.topproio.com/highchartsmore.js"></script>
+  <script src="https://p1.topproio.com/highchart_7.1.1_network.js"></script>
+  <!-- import fetch -->
+  <script>
+    const request = url => fetch(window.location.origin + url).then(response => response.json())
+  </script>
+  <!-- import chart -->
+  <script>
+    // 年度专利图形
+    const AnnualPatents = Vue.component('annual_patents', {
+      template: '<div id="annualPatents" style="height: 600px"></div>',
+      mounted () {
+        request('/patents/annual').then(res => {
+          this.render(res.data)
+        })
+      },
+      methods: {
+        render(source) {
+          const xData = Object.keys(source)
+          const yData = xData.map(item => {
+            return source[item]
+          })
+
+          Highcharts.chart('annualPatents', {
+            chart: {
+              type: 'spline'
+            },
+            title: {
+              text: '年度专利数量'
+            },
+            xAxis: {
+              categories: xData
+            },
+            yAxis: {
+              title: {
+                text: '专利数'
+              },
+              labels: {
+                formatter: function () {
+                  return this.value
+                }
+              }
+            },
+            tooltip: {
+              crosshairs: true,
+              shared: true
+            },
+            plotOptions: {
+              spline: {
+                marker: {
+                  radius: 4,
+                  lineColor: '#666666',
+                  lineWidth: 1
+                }
+              }
+            },
+            series: [{
+              name: '年度',
+              marker: {
+                symbol: 'square'
+              },
+              data: yData
+            }]
+          })
+        }
+      }
+    })
+    // 专利权人和其拥有的专利数量
+    const PatenteeOwnedNumbers = Vue.component('patentee_owned_patents', {
+      template: '<div id="patenteeOwnedNumbers" style="min-height: 800px"></div>',
+      mounted () {
+        request('/patents/patentee').then(res => {
+          this.render(res.data)
+        })
+      },
+      methods: {
+        render(source) {
+          const colors = ['#7cb5ec', '#434348', '#90ed7d', '#7cb5ec']
+          const patenteeNodes = source.map(record => {
+            return {
+              id: record.name,
+              mass: 1,
+              marker: {
+                radius: record.value / 6
+              },
+              dataLabels: {
+                enabled: record.value < 30 ? false : true,
+              },
+              color: colors[Math.floor(Math.random() * colors.length)]
+            }
+          })
+          Highcharts.chart('patenteeOwnedNumbers', {
+            chart: {
+              type: 'networkgraph'
+            },
+            title: {
+              text: '专利权人和其拥有的专利数量'
+            },
+            plotOptions: {
+              networkgraph: {
+                turboThreshold: 0,
+                keys: ['from', 'to', 'color']
+              }
+            },
+            series: [{
+              type: 'networkgraph',
+              layoutAlgorithm: {
+                enableSimulation: true,
+                initialPositions: 'random',
+                // Applied only to links, should be 0
+                attractiveForce: function () {
+                  return 0
+                },
+                repulsiveForce: function () {
+                  return 70
+                },
+                integration: 'euler',
+                // Half of the repulsive force
+                gravitationalConstant: 10
+              },
+              nodes: patenteeNodes,
+              // No links, only nodes:
+              data: []
+            }]
+          })
+        }
+      }
+    })
+    // 热门分类十年的申请数量分析（直方图）
+    const AnalysisOfCategories = Vue.component('analysis_categories', {
+      template: `
+        <div id="analysisOfCategories">热门分类十年的申请数量分析</div>
+      `,
+      mounted () {
+        request('/patents/analysis_categories').then(res => {
+          this.render(res.data)
+        })
+      },
+      methods: {
+        render(source) {
+          const chart = Highcharts.chart('analysisOfCategories', {
+            chart: {
+              type: 'column'
+            },
+
+            title: {
+              text: '主分类号 / 公开日'
+            },
+
+            subtitle: {
+              text: '热门分类十年的申请数量分析'
+            },
+
+            legend: {
+              align: 'right',
+              verticalAlign: 'middle',
+              layout: 'vertical'
+            },
+
+            xAxis: {
+              categories: source.categories,
+              labels: {
+                x: -10
+              }
+            },
+
+            yAxis: {
+              allowDecimals: false,
+              title: {
+                text: '记录数'
+              }
+            },
+
+            series: source.series,
+
+            responsive: {
+              rules: [{
+                condition: {
+                  maxWidth: 500
+                },
+                chartOptions: {
+                  legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal'
+                  },
+                  yAxis: {
+                    labels: {
+                      align: 'left',
+                      x: 0,
+                      y: -5
+                    },
+                    title: {
+                      text: null
+                    }
+                  },
+                  subtitle: {
+                    text: null
+                  },
+                  credits: {
+                    enabled: false
+                  }
+                }
+              }]
+            }
+          })
+        }
+      }
+    })
+    // 热门分类十年的申请数量分析（网络图）
+    const AnalysisOfCategoriesNetwork = Vue.component('analysis_categories_network', {
+      template: `
+        <div id="analysisOfCategoriesNetwork">热门分类十年的申请数量分析</div>
+      `,
+      mounted () {
+        request('/patents/analysis_categories_network').then(res => {
+          this.render(res.data)
+        })
+      },
+      methods: {
+        render(source) {
+          // 按 ipc 所占记录数标红和大小
+          const IPCs = source.reduce((acc, curr) => {
+            if (!acc[curr[0]]) {
+              acc[curr[0]] = 1
+            } else {
+              acc[curr[0]] ++
+            }
+            return acc
+          }, {})
+          const IPCsOptions = Object.keys(IPCs).map(ipc => {
+            return {
+              id: ipc,
+              dataLabels: {
+                enabled: true
+              },
+              marker: {
+                radius: IPCs[ipc] / 5,
+                fillColor: '#f15c80'
+              }
+            }
+          })
+          // 显示与所有 ipc 有关的记录的 label，当该记录数的 count >= IPCS.length 的时候就 break 循环
+          const patentees = []
+          const ipcsLength = Object.keys(IPCs).length
+          for (let i = 0; i < source.length; i ++) {
+            let count = 0
+            for (let x = 0; x < source.length; x ++) {
+              if (count >= ipcsLength) {
+                patentees.push(source[i])
+                count = 0
+                break
+              }
+              if (source[i][1] === source[x][1] && source[i][0] !== source[x][0]) {
+                count ++
+              }
+            }
+          }
+          const patenteesOptions = patentees.map(patentee => {
+            return {
+              id: patentee[1],
+              dataLabels: {
+                enabled: true
+              },
+              marker: {
+                radius: 7,
+                fillColor: '#90ed7d'
+              }
+            }
+          })
+          Highcharts.chart(analysisOfCategoriesNetwork, {
+            chart: {
+              type: 'networkgraph',
+              height: '100%'
+            },
+            title: {
+              text: '多重共线网络可视化'
+            },
+            subtitle: {
+              text: '热门分类十年的申请数量分析'
+            },
+            plotOptions: {
+              networkgraph: {
+                layoutAlgorithm: {
+                  enableSimulation: true,
+                  integration: 'euler',
+                  linkLength: 60
+                },
+                keys: ['from', 'to'],
+                marker: {
+                  radius: 5,
+                  lineWidth: 1
+                }
+              }
+            },
+            series: [{
+              nodes: [...IPCsOptions,...patenteesOptions],
+              data: source
+            }]
+          })
+        }
+      }
+    })
+    // 主分类的数量比对
+    const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analysis', {
+      template: `<div>
+          <div id="mainCategoriesComparsion" style="min-height: 800px"></div>
+          <analysis_categories></analysis_categories>
+          <analysis_categories_network></analysis_categories_network>
+        </div>`,
+        mounted () {
+          request('/patents/categories_comparsion').then(res => {
+            this.render(res.data)
+          })
+        },
+        methods: {
+          render(source) {
+            const colors = ['#7cb5ec', '#434348', '#90ed7d', '#7cb5ec']
+            const recordNodes = source.map(record => {
+              return {
+                id: record.name,
+                mass: 1,
+                marker: {
+                  radius: record.value / 20
+                },
+                dataLabels: {
+                  enabled: record.value < 100 ? false : true,
+                },
+                color: colors[Math.floor(Math.random() * colors.length)]
+              }
+            })
+            Highcharts.chart('mainCategoriesComparsion', {
+              chart: {
+                type: 'networkgraph'
+              },
+              title: {
+                text: '主分类的数量比对'
+              },
+              plotOptions: {
+                networkgraph: {
+                  turboThreshold: 0,
+                  keys: ['from', 'to', 'color']
+                }
+              },
+              series: [{
+                type: 'networkgraph',
+                layoutAlgorithm: {
+                  enableSimulation: true,
+                  initialPositions: 'random',
+                  // Applied only to links, should be 0
+                  attractiveForce: function () {
+                    return 0
+                  },
+                  repulsiveForce: function () {
+                    return 80
+                  },
+                  integration: 'euler',
+                  // Half of the repulsive force
+                  gravitationalConstant: 20
+                },
+                nodes: recordNodes,
+                // No links, only nodes:
+                data: []
+              }]
+            })
+          }
+        }
+    })
+    // 多重共现网络可视化
+    const MultipleNetworkVisualization = Vue.component('multiple_network_visualization', {
+      template: '<div id="multipleNetworkOccurrence"></div>',
+      mounted () {
+        request('/patents/network').then(res => {
+          this.render(res.data)
+        })
+      },
+      methods: {
+        render(source) {
+          // 筛选记录数大于 5 的所有专利权人
+          const multiplePatentees = source.reduce((acc, curr) => {
+            if (!acc[curr[0]]) {
+              acc[curr[0]] = 1
+            } else {
+              acc[curr[0]] ++
+            }
+            return acc
+          }, {})
+          const filterPatentees = Object.keys(multiplePatentees).filter(patentee => {
+            return multiplePatentees[patentee] > 5
+          }).map(patentee => {
+            return {
+              id: patentee,
+              dataLabels: {
+                enabled: true
+              },
+              marker: {
+                radius: multiplePatentees[patentee] / 3,
+                fillColor: '#f15c80'
+              }
+            }
+          })
+          Highcharts.chart('multipleNetworkOccurrence', {
+            chart: {
+              type: 'networkgraph',
+              height: '70%',
+              marginBottom: 100,
+              verticalAlign: 'top',
+              align: 'middle'
+            },
+            title: {
+              text: '多重共现网络可视化'
+            },
+            plotOptions: {
+              networkgraph: {
+                keys: ['from', 'to'],
+                layoutAlgorithm: {
+                  enableSimulation: true,
+                  integration: 'verlet',
+                  linkLength: 60
+                },
+                dataLabels: {
+                  enabled: false
+                },
+              }
+            },
+            series: [{
+              nodes: [...filterPatentees],
+              data: source
+            }]
+          })
+        }
+      }
+    })
+  </script>
+  <!-- import vue component -->
+  <script>
+    // 统计页的筛选
+    Vue.component('conditions', {
+      template: `
+        <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="行业">
+            <el-select placeholder="一级分类" disabled>
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select placeholder="二级分类" disabled>
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="地区">
+            <el-select placeholder="省" v-model="province">
+              <el-option v-for="item in provinces" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select placeholder="市" v-model="city" :disabled="disabledCity">
+              <el-option v-for="item in cities" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="年限">
+            <el-select placeholder="年" v-model="yearsStart">
+              <el-option v-for="item in years" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>~
+          <el-form-item>
+            <el-select placeholder="年" v-model="yearsEnd">
+              <el-option v-for="item in years" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button>查询</el-button>
+          </el-form-item>
+        </el-form>`,
+        data () {
+          return {
+            years: [{
+              value: 1950,
+              label: '1950年'
+            }],
+            provinces: [{
+              value: '北京市',
+              label: '北京市'
+            }],
+            cities: [{
+              value: '东城区',
+              label: '东城区'
+            }],
+            yearsStart: '',
+            yearsEnd: '',
+            province: '',
+            city: '',
+            disabledCity: true,
+            chinaDivisions: {}
+          }
+        },
+        mounted () {
+          request('/common/years').then(res => {
+            this.years = res.data.map(item => ({value: item, label: item + '年'}))
+          })
+          request('/common/cities').then(res => {
+            this.chinaDivisions = res.data
+            this.provinces = Object.keys(res.data).map(item => ({value: item, label: item}))
+          })
+        },
+        methods: {
+          getCities () {
+            return this.chinaDivisions[this.province].map(item => ({value: item, label: item}))
+          }
+        },
+        watch: {
+          province: function() {
+            this.cities = this.getCities()
+            this.city = this.cities[0].value
+            this.disabledCity = false
+          }
+        }
+    })
+    // 统计页的图形选项卡
+    Vue.component('tabs', {
+      template: `
+      <el-menu
+        mode="horizontal"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        router>
+          <el-menu-item index="/statistical/annual_patents">年度专利数量</el-menu-item>
+          <el-menu-item index="/statistical/patentee_owned_patents">专利权人和其拥有的专利数量</el-menu-item>
+          <el-menu-item index="/statistical/categories_comparison_analysis">主分类的数量比对以及数量分析</el-menu-item>
+          <el-menu-item index="/statistical/multiple_network_visualization">多重共现网络可视化</el-menu-item>
+      </el-menu>`
+    })
+    // 专利列表
+    Vue.component('patents_table', {
+      template: `
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        height="600"
+        style="width: 100%">
+        <el-table-column
+          fixed
+          prop="id"
+          label="ID"
+          width="150">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="专利名称"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="publication_no"
+          label="公开（公告）号"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="puclication_date"
+          label="公开（公告）日"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="ipc"
+          label="IPC分类号"
+          width="300">
+        </el-table-column>
+        <el-table-column
+          prop="applicant"
+          label="申请（专利权）人"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="legal_day"
+          label="法律状态生效日"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="legal_status"
+          label="法律状态含义"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <el-button type="text" size="small">
+              <router-link :to="{ path: '/patents/detail', query: { id: scope.row.id } }">查看</router-link>
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>`,
+      props: ['tableData'],
+      data() {
+        return {}
+      }
+    })
+    // 专利查询页的筛选
+    Vue.component('conditions_patent', {
+      template: `
+      <el-form :inline="true" class="demo-form-inline" size="small">
+        <el-form-item label="行业">
+          <el-select placeholder="一级分类" disabled>
+            <el-option label="区域一" value="shanghai"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select placeholder="二级分类" disabled>
+            <el-option label="区域一" value="shanghai"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地区">
+          <el-select placeholder="省" v-model="province">
+            <el-option v-for="item in provinces" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button>查询</el-button>
+        </el-form-item>
+      </el-form>`,
+      data () {
+          return {
+            provinces: [{
+              value: '北京市',
+              label: '北京市'
+            }],
+            province: '',
+          }
+        },
+        mounted () {
+          request('/common/cities').then(res => {
+            this.provinces = Object.keys(res.data).map(item => ({value: item, label: item}))
+          })
+        }
+    })
+    // 专利页面的分页，开发的匆忙，写死的，因为就录入了 28000条数据，大概 560 页
+    Vue.component('pagination', {
+      template: `
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="28000"
+        :page-size="50"
+        @current-change="pageChange"
+        >
+      </el-pagination>
+      `,
+      methods: {
+        pageChange (page) {
+          const offset = (page - 1) * 50 + 1
+          const limit = 50
+          request('/patents/list' + `?limit=${limit}&offset=${offset}`).then(res => {
+            this.$emit('patents', res.data)
+          })
+        }
+      }
+    })
+    // 统计页面组合：选项卡+筛选
+    const Statistical = Vue.component('statistical', {
+      template: `
+      <div class="layout-left">
+        <tabs></tabs>
+        <conditions></conditions>
+        <router-view></router-view>
+      </div>`
+    })
+    // 专利查询组合：筛选+专利列表+分页
+    const PatentsQuery = Vue.component('patent_query', {
+      template: `
+      <div class="layout-left">
+        <conditions_patent></conditions_patent>
+        <patents_table :tableData="tableData"></patents_table>
+        <div class="layout-right">
+          <pagination @patents="getTableData"></pagination>
+        </div>
+      </div>`,
+      data () {
+        return {
+          tableData: []
+        }
+      },
+      mounted () {
+        request('/patents/list').then(res => {
+          this.tableData = res.data
+        })
+      },
+      methods: {
+        getTableData (data) {
+          this.tableData = data
+        }
+      }
+    })
+    // 专利详情页面
+    const PatentDetail = Vue.component('patent_detail', {
+      template: `
+      <el-tabs value="first">
+        <el-tab-pane label="专利查询-专利详情" name="first" class="demo-table-expand">
+          <el-form label-position="left" inline>
+            <el-form-item label="专利 ID">
+              <span>{{ patentDetail.id || '' }}</span>
+            </el-form-item>
+            <el-form-item label="专利名称">
+              <span>{{ patentDetail.name || '' }}</span>
+            </el-form-item>
+            <el-form-item label="行业">
+              <span></span>
+            </el-form-item>
+            <el-form-item label="申请号">
+              <span>{{ patentDetail.application_no || '' }}</span>
+            </el-form-item>
+            <el-form-item label="同族">
+              <span>{{ patentDetail.kin || '' }}</span>
+            </el-form-item>
+            <el-form-item label="引证">
+              <span>{{ patentDetail.citation || '' }}</span>
+            </el-form-item>
+            <el-form-item label="被引">
+              <span>{{ patentDetail.cited || '' }}</span>
+            </el-form-item>
+            <el-form-item label="申请日">
+              <span>{{ patentDetail.application_day || '' }}</span>
+            </el-form-item>
+            <el-form-item label="公开（公告）号">
+              <span>{{ patentDetail.publication_no || '' }}</span>
+            </el-form-item>
+            <el-form-item label="公开（公告）日">
+              <span>{{ patentDetail.publication_date || '' }}</span>
+            </el-form-item>
+            <el-form-item label="IPC 分类日">
+              <span>{{ patentDetail.ipc || '' }}</span>
+            </el-form-item>
+            <el-form-item label="申请（专利权）人">
+              <span>{{ patentDetail.applicant || '' }}</span>
+            </el-form-item>
+            <el-form-item label="发明人">
+              <span>{{ patentDetail.inventor || '' }}</span>
+            </el-form-item>
+            <el-form-item label="优先权号">
+              <span>{{ patentDetail.priority_no || '' }}</span>
+            </el-form-item>
+            <el-form-item label="优先权日">
+              <span>{{ patentDetail.priority_day || '' }}</span>
+            </el-form-item>
+            <el-form-item label="申请人地址">
+              <span>{{ patentDetail.address || '' }}</span>
+            </el-form-item>
+            <el-form-item label="申请人邮编">
+              <span>{{ patentDetail.zip || '' }}</span>
+            </el-form-item>
+            <el-form-item label="申请人号">
+              <span>{{ patentDetail.application_no || '' }}</span>
+            </el-form-item>
+            <el-form-item label="法律状态生效日">
+              <span>{{ patentDetail.legal_day || '' }}</span>
+            </el-form-item>
+            <el-form-item label="法律状态含义">
+              <span>{{ patentDetail.legal_status || '' }}</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>`,
+      data () {
+        return {
+          patentDetail: {}
+        }
+      },
+      mounted () {
+        const url = '/patents/detail?id=' + this.$route.query.id || 1
+        request(url).then(res => {
+          this.patentDetail = res.data
+        })
+      }
+    })
+    // 专利查询页面（渲染子路由）
+    const Patents = Vue.component('patents_query', {
+      template: `
+        <div>
+          <router-view></router-view>
+        </div>`
+    })
+  </script>
+  <script>
+    // 页面路由
+    const routes = [
+      { path: '/', redirect: '/statistical/annual_patents' },
+      { path: '/statistical', component: Statistical, redirect: '/statistical/annual_patents',
+        children: [
+          { path: 'annual_patents', component: AnnualPatents },
+          { path: 'patentee_owned_patents', component: PatenteeOwnedNumbers },
+          { path: 'categories_comparison_analysis', component: CategoriesComparisonAnalysis },
+          { path: 'multiple_network_visualization', component: MultipleNetworkVisualization }
+        ] },
+      { path: '/patents', component: Patents, redirect: '/patents/query',
+        children: [
+          { path: 'query', component: PatentsQuery },
+          { path: 'detail', component:  PatentDetail }
+        ]
+      }
+    ]
+  </script>
+  <script>
+    const router = new VueRouter({
+      routes
+    })
+    const app = new Vue({
+      router,
+      mounted() {
+        setTimeout(() => {
+          document.getElementById('spinnerWrap').style.display = 'none'
+        }, 1000)
+      }
+    }).$mount('#app')
+  </script>
+</html>
