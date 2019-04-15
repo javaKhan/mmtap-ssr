@@ -39,39 +39,349 @@
                 <div class="container-fluid">
                     <div class="row box_line">
                         <span class="col-md-01" style="margin:0 15px">行业</span>
-                        <select class="col-md-01 form-control input_query"><option value="">一级分类</option></select></span>
-                        <select class="form-control input_query"><option value="">二级分类</option></select></span>
+                        <select id="level1-year" class="level1 col-md-01 form-control input_query "><option value="">一级分类</option></select></span>
+                        <select id="level2-year" class="level2 form-control input_query"><option value="">二级分类</option></select></span>
                         <span style="margin:0 15px">地区</span>
-                        <select class="form-control input_query"><option value="">省</option></select></span>
-                        <select class="form-control input_query"><option value="">市</option></select></span>
+                        <select id="province-year" class="province form-control input_query"><option value="">省</option></select></span>
+                        <select id="city-year" class="city form-control input_query"><option value="">市</option></select></span>
                         <span style="margin:0 15px">年限</span>
-                        <select class="form-control input_query"><option value="">年</option></select>
-                        <select class="form-control input_query"><option value="">年</option></select>
-                        <button class="btn btn-default" style="margin-left: 15px">查询</button>
+                        <select id="start-year" class="start form-control input_query"><option value="">年</option></select>
+                        <select id="end-year" class="end form-control input_query"><option value="">年</option></select>
+                        <button id="yearQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
                     </div>
                 </div>
-                <annual_patents></annual_patents>
+                <!--<annual_patents></annual_patents>-->
+                <div id="annual_patents"></div>
             </div>
             <div class="tab-pane fade" id="person">
-                <patentee_owned_patents></patentee_owned_patents>
+                <div class="container-fluid">
+                    <div class="row box_line">
+                        <span class="col-md-01" style="margin:0 15px">行业</span>
+                        <select id="level1-person" class="level1 col-md-01 form-control input_query "><option value="">一级分类</option></select></span>
+                        <select id="level2-person" class="level2 form-control input_query"><option value="">二级分类</option></select></span>
+                        <span style="margin:0 15px">地区</span>
+                        <select id="province-person" class="province form-control input_query"><option value="">省</option></select></span>
+                        <select id="city-person" class="city form-control input_query"><option value="">市</option></select></span>
+                        <span style="margin:0 15px">年限</span>
+                        <select id="start-person" class="start form-control input_query"><option value="">年</option></select>
+                        <select id="end-person" class="end form-control input_query"><option value="">年</option></select>
+                        <button id="personQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
+                    </div>
+                </div>
+                <!--<patentee_owned_patents></patentee_owned_patents>-->
+                <div id="patentee_owned_patents"></div>
             </div>
             <div class="tab-pane fade" id="fenlei">
-                <categories_comparison_analysis></categories_comparison_analysis>
-                <!--<analysis_categories></analysis_categories>-->
-                <!--<analysis_categories_network></analysis_categories_network>-->
-
+                <div class="container-fluid">
+                    <div class="row box_line">
+                        <span class="col-md-01" style="margin:0 15px">行业</span>
+                        <select id="level1-fl" class="level1 col-md-01 form-control input_query "><option value="">一级分类</option></select></span>
+                        <select id="level2-fl" class="level2 form-control input_query"><option value="">二级分类</option></select></span>
+                        <span style="margin:0 15px">地区</span>
+                        <select id="province-fl" class="province form-control input_query"><option value="">省</option></select></span>
+                        <select id="city-fl" class="city form-control input_query"><option value="">市</option></select></span>
+                        <span style="margin:0 15px">年限</span>
+                        <select id="start-fl" class="start form-control input_query"><option value="">年</option></select>
+                        <select id="end-fl" class="end form-control input_query"><option value="">年</option></select>
+                        <button id="flQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
+                    </div>
+                </div>
+                <!--<categories_comparison_analysis></categories_comparison_analysis>-->
+                <div id="categories_comparison_analysis"></div>
             </div>
             <div class="tab-pane fade" id="wangluo">
-                <multiple_network_visualization></multiple_network_visualization>
+                <div class="container-fluid">
+                    <div class="row box_line">
+                        <span class="col-md-01" style="margin:0 15px">行业</span>
+                        <select id="level1-net" class="level1 col-md-01 form-control input_query "><option value="">一级分类</option></select></span>
+                        <select id="level2-net" class="level2 form-control input_query"><option value="">二级分类</option></select></span>
+                        <span style="margin:0 15px">地区</span>
+                        <select id="province-net" class="province form-control input_query"><option value="">省</option></select></span>
+                        <select id="city-net" class="city form-control input_query"><option value="">市</option></select></span>
+                        <span style="margin:0 15px">年限</span>
+                        <select id="start-net" class="start form-control input_query"><option value="">年</option></select>
+                        <select id="end-net" class="end form-control input_query"><option value="">年</option></select>
+                        <button id="netQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
+                    </div>
+                </div>
+                <!--<multiple_network_visualization></multiple_network_visualization>-->
+                <div id="multiple_network_visualization"></div>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-    var app=new Vue({
-        el:'#app',
-        data:{
-            message:''
+<script type="text/javascript">
+    var annual_patents=new AnnualPatents().$mount("#annual_patents");
+    var patentee_owned_patents=new PatenteeOwnedNumbers().$mount("#patentee_owned_patents");
+    var categories_comparison_analysis=new CategoriesComparisonAnalysis().$mount("#categories_comparison_analysis");
+    var multiple_network_visualization=new MultipleNetworkVisualization().$mount("#multiple_network_visualization");
+
+    var ipcs,citys;
+    $(document).ready(function () {
+
+        /**
+         * IPC分类 和 城市地区 基础数据
+         */
+        //行业分类
+        $.getJSON("/common/ipc",function (res) {
+            ipcs = res.data;
+            // console.info(res.data);
+            $.each(res.data,function (i,val) {
+                $(".level1").append("<option value='"+val.code+"'>"+val.name+"</option>");
+            })
+        });
+        //地区城市
+        $.getJSON("/common/cities",function (res) {
+            citys = res.data;
+            $.each(res.data,function (i) {
+                // console.info(i);
+                $(".province").append("<option>"+i+"</option>");
+            })
+        })
+
+
+
+
+        /**
+         * 第一个图
+         * 年度专利数量
+         */
+        //行业分类级联
+        $("#level1-year").change(function () {
+            var level1 = $(this).val();
+            if(level1){
+                $.each(ipcs,function (index) {
+                    if(ipcs[index].code==level1){
+                        // console.info(ipcs[index].child);
+                        $("#level2-year").empty().append("<option value=''>二级分类</option>");
+                        $.each(ipcs[index].child,function (i,val) {
+                            $("#level2-year").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                        })
+                    }
+                });
+            }else {
+                $("#level2-year").empty().append("<option value=''>二级分类</option>");
+            }
+
+        });
+        //城市级联
+        $("#province-year").change(function () {
+            var province = $(this).val();
+            if(province){
+                $.each(citys,function (index,obj) {
+                    if(index==province){
+                        $("#city-year").empty().append("<option value=''>城市</option>");
+                        $.each(obj,function (i,val) {
+                            $("#city-year").append("<option value='"+val+"'>"+val+"</option>");
+                        })
+                    }
+                });
+            }else {
+                // console.info("选择了空省份");
+                $("#city-year").empty().append("<option value=''>城市</option>");
+            }
+        });
+
+        /**
+         * 第二个图
+         * 专利权人及数量
+         */
+        //行业分类级联
+        $("#level1-person").change(function () {
+            var level1 = $(this).val();
+            if(level1){
+                $.each(ipcs,function (index) {
+                    if(ipcs[index].code==level1){
+                        // console.info(ipcs[index].child);
+                        $("#level2-person").empty().append("<option value=''>二级分类</option>");
+                        $.each(ipcs[index].child,function (i,val) {
+                            $("#level2-person").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                        })
+                    }
+                });
+            }else {
+                $("#level2-person").empty().append("<option value=''>二级分类</option>");
+            }
+
+        });
+        //城市级联
+        $("#province-person").change(function () {
+            var province = $(this).val();
+            if(province){
+                $.each(citys,function (index,obj) {
+                    if(index==province){
+                        $("#city-person").empty().append("<option value=''>城市</option>");
+                        $.each(obj,function (i,val) {
+                            $("#city-person").append("<option value='"+val+"'>"+val+"</option>");
+                        })
+                    }
+                });
+            }else {
+                // console.info("选择了空省份");
+                $("#city-person").empty().append("<option value=''>城市</option>");
+            }
+        });
+
+        /**
+         * 第三个图
+         * 分类数量
+         */
+        //行业分类级联
+        $("#level1-fl").change(function () {
+            var level1 = $(this).val();
+            if(level1){
+                $.each(ipcs,function (index) {
+                    if(ipcs[index].code==level1){
+                        // console.info(ipcs[index].child);
+                        $("#level2-fl").empty().append("<option value=''>二级分类</option>");
+                        $.each(ipcs[index].child,function (i,val) {
+                            $("#level2-fl").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                        })
+                    }
+                });
+            }else {
+                $("#level2-fl").empty().append("<option value=''>二级分类</option>");
+            }
+
+        });
+        //城市级联
+        $("#province-fl").change(function () {
+            var province = $(this).val();
+            if(province){
+                $.each(citys,function (index,obj) {
+                    if(index==province){
+                        $("#city-fl").empty().append("<option value=''>城市</option>");
+                        $.each(obj,function (i,val) {
+                            $("#city-fl").append("<option value='"+val+"'>"+val+"</option>");
+                        })
+                    }
+                });
+            }else {
+                // console.info("选择了空省份");
+                $("#city-fl").empty().append("<option value=''>城市</option>");
+            }
+        });
+
+        /**
+         * 第四个图
+         * 多重网络贡献
+         */
+        //行业分类级联
+        $("#level1-net").change(function () {
+            var level1 = $(this).val();
+            if(level1){
+                $.each(ipcs,function (index) {
+                    if(ipcs[index].code==level1){
+                        // console.info(ipcs[index].child);
+                        $("#level2-net").empty().append("<option value=''>二级分类</option>");
+                        $.each(ipcs[index].child,function (i,val) {
+                            $("#level2-net").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                        })
+                    }
+                });
+            }else {
+                $("#level2-net").empty().append("<option value=''>二级分类</option>");
+            }
+
+        });
+        //城市级联
+        $("#province-net").change(function () {
+            var province = $(this).val();
+            if(province){
+                $.each(citys,function (index,obj) {
+                    if(index==province){
+                        $("#city-net").empty().append("<option value=''>城市</option>");
+                        $.each(obj,function (i,val) {
+                            $("#city-net").append("<option value='"+val+"'>"+val+"</option>");
+                        })
+                    }
+                });
+            }else {
+                $("#city-net").empty().append("<option value=''>城市</option>");
+            }
+        });
+
+        //年度生成
+        var currentYear = new Date().getFullYear();
+        for(var  i=1949;i<currentYear;i++){
+            $(".start").append("<option value='"+i+"'>"+i+"</option>");
+            $(".end").append("<option value='"+i+"'>"+i+"</option>");
         }
+
+        /**
+         * 条件查询 数据获取
+         */
+        $("#yearQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-year").val(),
+                "level2":$("#level2-year").val(),
+                "province":$("#province-year").val(),
+                "city":$("#city-year").val(),
+                "startYear":$("#start-year").val(),
+                "endYear":$("#end-year").val(),
+            };
+            $.get("/patents/annual",data,function (res) {
+                annual_patents.render(res.data);
+            });
+        });
+
+        $("#personQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-person").val(),
+                "level2":$("#level2-person").val(),
+                "province":$("#province-person").val(),
+                "city":$("#city-person").val(),
+                "startYear":$("#start-person").val(),
+                "endYear":$("#end-person").val(),
+            };
+            $.get("/patents/patentee",data,function (res) {
+                patentee_owned_patents.render(res.data);
+            });
+        });
+
+        $("#personQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-person").val(),
+                "level2":$("#level2-person").val(),
+                "province":$("#province-person").val(),
+                "city":$("#city-person").val(),
+                "startYear":$("#start-person").val(),
+                "endYear":$("#end-person").val(),
+            };
+            $.get("/patents/patentee",data,function (res) {
+                patentee_owned_patents.render(res.data);
+            });
+        });
+
+        $("#flQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-fl").val(),
+                "level2":$("#level2-fl").val(),
+                "province":$("#province-fl").val(),
+                "city":$("#city-fl").val(),
+                "startYear":$("#start-fl").val(),
+                "endYear":$("#end-fl").val(),
+            };
+            $.get("/patents/categories_comparsion",data,function (res) {
+                categories_comparison_analysis.render(res.data);
+            });
+        });
+
+        $("#netQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-net").val(),
+                "level2":$("#level2-net").val(),
+                "province":$("#province-net").val(),
+                "city":$("#city-net").val(),
+                "startYear":$("#start-net").val(),
+                "endYear":$("#end-net").val(),
+            };
+            $.get("/patents/network",data,function (res) {
+                multiple_network_visualization.render(res.data);
+            });
+        });
+
+
+
     })
 </script>
 
