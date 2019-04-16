@@ -41,40 +41,40 @@
             <li class="pull-right">
                 <ul class="hi-menu">
                     <!-- 搜索 -->
-                    <li class="dropdown">
-                        <a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
-                            <i class="him-icon zmdi zmdi-search"></i>
-                        </a>
-                        <ul class="dropdown-menu dm-icon pull-right">
-                            <form id="search-form" class="form-inline" v-on:submit.prevent="search">
-                                <div class="input-group">
-                                    <input id="keywords" type="text" :value="search_text" v-model="search_text"
-                                           class="form-control" placeholder="搜索"/>
-                                    <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><span
-                                                class="glyphicon glyphicon-search"></span></button>
-                                    </div>
-                                </div>
-                            </form>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
-                            <i class="him-icon zmdi zmdi-dropbox"></i>
-                        </a>
-                        <!--请选择系统切换-->
-                        <ul class="dropdown-menu dm-icon pull-right">
-                            <li class="skin-switch">
-                                请选择系统切换
-                            </li>
-                            <li class="divider"></li>
-                            <li v-for="sys in system_list" v-on:click="sys_switch(sys)">
-                                <a class="waves-effect switch-systems" href="javascript:;"><i class="zmdi"
-                                                                                              :class="sys.icon"></i>
-                                    {{sys.title}}</i></a>
-                            </li>
-                        </ul>
-                    </li>
+                    <!--<li class="dropdown">-->
+                        <!--<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">-->
+                            <!--<i class="him-icon zmdi zmdi-search"></i>-->
+                        <!--</a>-->
+                        <!--<ul class="dropdown-menu dm-icon pull-right">-->
+                            <!--<form id="search-form" class="form-inline" v-on:submit.prevent="search">-->
+                                <!--<div class="input-group">-->
+                                    <!--<input id="keywords" type="text" :value="search_text" v-model="search_text"-->
+                                           <!--class="form-control" placeholder="搜索"/>-->
+                                    <!--<div class="input-group-btn">-->
+                                        <!--<button type="submit" class="btn btn-default"><span-->
+                                                <!--class="glyphicon glyphicon-search"></span></button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</form>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <!--<li class="dropdown">-->
+                        <!--<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">-->
+                            <!--<i class="him-icon zmdi zmdi-dropbox"></i>-->
+                        <!--</a>-->
+                        <!--&lt;!&ndash;请选择系统切换&ndash;&gt;-->
+                        <!--<ul class="dropdown-menu dm-icon pull-right">-->
+                            <!--<li class="skin-switch">-->
+                                <!--请选择系统切换-->
+                            <!--</li>-->
+                            <!--<li class="divider"></li>-->
+                            <!--<li v-for="sys in system_list" v-on:click="sys_switch(sys)">-->
+                                <!--<a class="waves-effect switch-systems" href="javascript:;"><i class="zmdi"-->
+                                                                                              <!--:class="sys.icon"></i>-->
+                                    <!--{{sys.title}}</i></a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
                     <li class="dropdown">
                         <a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
                             <i class="him-icon zmdi zmdi-more-vert"></i>
@@ -84,11 +84,11 @@
                                 <a class="waves-effect" data-ma-action="fullscreen" href="javascript:fullPage();"><i
                                         class="zmdi zmdi-fullscreen"></i> 全屏模式</a>
                             </li>
-                            <li>
-                                <a class="waves-effect" data-ma-action="clear-localstorage"
-                                   href="javascript:clearCookies();"><i
-                                        class="zmdi zmdi-delete"></i> 清除缓存</a>
-                            </li>
+                            <!--<li>-->
+                                <!--<a class="waves-effect" data-ma-action="clear-localstorage"-->
+                                   <!--href="javascript:clearCookies();"><i-->
+                                        <!--class="zmdi zmdi-delete"></i> 清除缓存</a>-->
+                            <!--</li>-->
                             <!--菜单-->
                             <li v-for="m in user_menus">
                                 <a v-if='m.isOpenTab' class="waves-effect" href="javascript:;" v-on:click="open_tab(m)"><i

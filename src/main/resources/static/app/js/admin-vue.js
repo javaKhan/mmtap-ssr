@@ -61,15 +61,11 @@ var data = {
     //system_list.name对应主题名称
     system_list: [
         {id: '1', skin: 'skin-green', title: '知识产权信息系统', icon: 'zmdi-shield-security'},
-        // {id: '2', skin: 'skin-dark-blue', title: '内容管理系统', icon: 'zmdi-wikipedia'},
-        // {id: '3', skin: 'skin-pink', title: '支付管理系统', icon: 'zmdi-paypal-alt'},
-        // {id: '4', skin: 'skin-purple', title: '用户管理系统', icon: 'zmdi-account'},
-        // {id: '5', skin: 'skin-blue', title: '存储管理系统', icon: 'zmdi-cloud'},
     ],
     //main
     user_menus: [
-        {title: '个人资料', icon: 'zmdi-account', url: '', isOpenTab: true},
-        {title: '隐私管理', icon: 'zmdi-face', url: '', isOpenTab: true},
+        // {title: '个人资料', icon: 'zmdi-account', url: '', isOpenTab: true},
+        // {title: '隐私管理', icon: 'zmdi-face', url: '', isOpenTab: true},
         {title: '退出登录', icon: 'zmdi-run', url: 'logout', isOpenTab: false}
     ],
     user: {
