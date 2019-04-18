@@ -54,6 +54,7 @@ Vue.component('admin-sidebar', {
     }
 })
 
+
 var data = {
     system_skin: 'skin-green',
     //header

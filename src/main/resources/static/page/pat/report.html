@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>生成报告</title>
+
+    <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+    <link href="/app/css/common.css" rel="stylesheet"/>
+
+
+
+    <style>
+        .row-hight{
+            line-height: 30px;
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="main">
+    <div class="container">
+        <div class="row text-center">
+            <h3>专利数据分析报告</h3>
+        </div>
+        <div class="row row-hight">
+            <div class="col-md-3 text-right">一级分类</div>
+            <div class="col-md-6">
+                <select id="level1" class="level1 col-md-01 form-control input_query">
+                    <option value="" disabled="disabled" selected="selected" style='display:none;'>一级分类</option>
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row row-hight">
+            <div class="col-md-3 text-right">二级分类</div>
+            <div class="col-md-6">
+                <select id="level2" class="level2 form-control input_query">
+                    <option value="" disabled="disabled" selected="selected" style='display:none;'>二级分类</option>
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row row-hight">
+            <div class="col-md-3 text-right">省份</div>
+            <div class="col-md-6">
+                <select id="province" class="province form-control input_query">
+                    <option value="" disabled="disabled" selected="selected" style='display:none;'>省</option>
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row row-hight">
+            <div class="col-md-3 text-right">城市</div>
+            <div class="col-md-6">
+                <select id="city" class="city form-control input_query">
+                    <option value="" disabled="disabled" selected="selected" style='display:none;'>市</option>
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row text-center row-hight">
+            <button id="reportBtn" class="btn btn-default">生成报告</button>
+        </div>
+    </div>
+    <div class="container">
+        <div id="partArea" class="row"></div>
+    </div>
+</div>
+
+
+
+<script src="/plugins/jquery.1.12.4.min.js"></script>
+<script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="/plugins/vue/2.3.4/vue.min.js"></script>
+<script src="/plugins/mmtap/jquery.fileDownload.js"></script>
+
+<script src="/plugins/hichart/highcharts.js"></script>
+<script src="/plugins/hichart/highcharts-more.js"></script>
+<script src="/plugins/hichart/networkgraph.js"></script>
+<script src="/plugins/hichart/exporting.js"></script>
+<script src="/plugins/hichart/offline-exporting.js"></script>
+<script src="/plugins/hichart/chart0418.js"></script>
+
+<script>
+    var ipcs,citys;
+
+    $(document).on('click', "#reportBtn",function(){
+        console.info("导出word")
+        var data = {
+            level1:$("#level1").val(),
+            level2:$("#level2").val(),
+            province:$("#province").val(),
+            city:$("#city").val(),
+        };
+        var isIpc=false;
+        var isCity =false;
+        if(""==data.level2 || null==data.level2){
+            alert("请选择行业二级分类");
+        }else {
+            isIpc=true;
+        }
+        if (""==data.cit || null==data.city){
+            alert("请选择城市");
+        }else {
+            isCity = true;
+        }
+        if (isIpc && isCity){
+            //生成图
+            var annual_patents=new AnnualPatents().$mount("#partArea");
+            annual_patents.exp
+        }
+
+
+
+        $.fileDownload("/patents/report/word",{
+            data:{
+                level1:$("#level1").val(),
+                level2:$("#level2").val(),
+                province:$("#province").val(),
+                city:$("#city").val(),
+                level1Name:$("#level1").find("option:selected").text(),
+                level2Name:$("#level2").find("option:selected").text(),
+            },
+            prepareCallback:function(url){
+                // alert("正在生成报告,请稍后...");
+            },
+            successCallback:function(url){
+                alert("生成报告完成！");
+            },
+            failCallback:function (html, url) {
+                alert("生成失败，未知的异常。");
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        //行业分类
+        $.getJSON("/common/ipc",function (res) {
+            ipcs = res.data;
+            $.each(res.data,function (i,val) {
+                $("#level1").append("<option value='"+val.code+"'>"+val.name+"</option>");
+            })
+        });
+
+        //行业分类级联
+        $("#level1").change(function () {
+            var level1 = $(this).val();
+            $.each(ipcs,function (index) {
+               if(ipcs[index].code==level1){
+                    $.each(ipcs[index].child,function (i,val) {
+                        $("#level2").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                    })
+               }
+            });
+        });
+
+
+        //地区城市
+        $.getJSON("/common/cities",function (res) {
+            citys = res.data;
+            $.each(res.data,function (i) {
+                $("#province").append("<option>"+i+"</option>");
+            })
+        })
+
+        //城市级联
+        $("#province").change(function () {
+            var province = $(this).val();
+            $.each(citys,function (index,obj) {
+                if(index==province){
+                    $.each(obj,function (i,val) {
+                        $("#city").append("<option value='"+val+"'>"+val+"</option>");
+                    })
+                }
+            });
+        });
+
+    })
+</script>
+
+</body>
+</html>

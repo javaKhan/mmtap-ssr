@@ -2,23 +2,34 @@ package com.mmtap.modules.pat.controller;
 
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.util.BytePictureUtils;
+import com.mmtap.common.ResultGenerator;
 import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
 import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
+import com.mmtap.modules.pat.vo.RepVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.BASE64Decoder;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -156,18 +167,6 @@ public class FrontController {
         return result;
     }
 
-    /**
-     *
-     * @param cat
-     * @param se
-     * @return
-     */
-    private Map findItem(String cat,List se){
-        Map map = new HashMap();
-
-        return map;
-    }
-
 
     /**
      * 多重共线网络可视化
@@ -243,4 +242,73 @@ public class FrontController {
         return PageRequest.of(page, size, sort);
     }
 
+    @RequestMapping("/report/pic")
+    public Object  generalPic(PatVo patVo){
+        Map m = new HashMap();
+        //专利数量
+        m.put("partArea","1-1");
+        m.put("allArea","1-2");
+
+        //专利权人和其所拥有的专利数量
+        m.put("partPerson","2-1");
+        m.put("allPerson","2-2");
+
+        //分类号的数量对比
+        m.put("patIpc","");
+        m.put("allIpc","");
+
+        //多重共现网络
+        m.put("partNet","");
+        m.put("allNet","");
+
+        return ResultGenerator.ok(m);
+    }
+
+    @RequestMapping("/report/word")
+    public void  generalWord(HttpServletResponse response,RepVo repVo){
+        try {
+            Map dataMap = new HashMap();
+            dataMap.put("vo",repVo);
+
+            //8个图
+
+            dataMap.put("partArea", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+//            dataMap.put("allArea", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("partPerson", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("allPerson", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("patIpc", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("allIpc", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("partNet", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+//            dataMap.put("allNet", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+
+
+            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp4.docx");
+            XWPFTemplate template = XWPFTemplate.compile(templateFile);
+            template.render(dataMap);
+            String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            response.addHeader("Content-Type", "application/vnd.ms-word");
+            response.addHeader("Content-Type", "application/x-msword");
+            response.setHeader("Content-Disposition","attachment;filename=report-"+fileName+".docx");
+            ServletOutputStream out = response.getOutputStream();
+            template.write(out);
+            out.flush();
+            out.close();
+            template.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 生成二进制图片
+     * @param base64str
+     * @return
+     * @throws Exception
+     */
+    private BufferedImage GBI(String base64str) throws Exception {
+        byte[] bs = new BASE64Decoder().decodeBuffer(base64str);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bs);
+        BufferedImage bi = ImageIO.read(inputStream);
+        return bi;
+    }
 }

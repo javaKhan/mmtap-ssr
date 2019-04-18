@@ -5,12 +5,14 @@
     <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="/plugins/jquery.1.12.4.min.js"></script>
     <script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
-    <script src="https://p1.topproio.com/highchart_7.1.1.js"></script>
-    <script src="https://p1.topproio.com/highchartsmore.js"></script>
-    <script src="https://p1.topproio.com/highchart_7.1.1_network.js"></script>
-    <script src="https://p1.topproio.com/highcharts_export_7.1.1.js"></script>
     <script src="/plugins/vue/2.3.4/vue.min.js"></script>
-    <script src="/plugins/mmtap/chart.js" type="application/javascript"></script>
+
+    <script src="/plugins/hichart/highcharts.js"></script>
+    <script src="/plugins/hichart/highcharts-more.js"></script>
+    <script src="/plugins/hichart/networkgraph.js"></script>
+    <script src="/plugins/hichart/exporting.js"></script>
+    <script src="/plugins/hichart/offline-exporting.js"></script>
+    <script src="/plugins/hichart/chart0418.js"></script>
     <style>
         .box_line{
             display: flex;
@@ -88,6 +90,8 @@
                 </div>
                 <!--<categories_comparison_analysis></categories_comparison_analysis>-->
                 <div id="categories_comparison_analysis"></div>
+                <div id="analysis_categories"></div>
+                <div id="analysis_categories_network"></div>
             </div>
             <div class="tab-pane fade" id="wangluo">
                 <div class="container-fluid center-block">
@@ -111,7 +115,9 @@
     </div>
 <script type="text/javascript">
     var annual_patents=new AnnualPatents().$mount("#annual_patents");
-    var patentee_owned_patents=new PatenteeOwnedNumbers().$mount("#patentee_owned_patents");
+    var patentee_owned_patents=new PatenteeOwnedPatents().$mount("#patentee_owned_patents");
+    var analysis_categories = new AnalysisCategories().$mount("#analysis_categories");
+    var analysis_categories_network = new AnalysisCategoriesNetwork().$mount("#analysis_categories_network");
     var categories_comparison_analysis=new CategoriesComparisonAnalysis().$mount("#categories_comparison_analysis");
     var multiple_network_visualization=new MultipleNetworkVisualization().$mount("#multiple_network_visualization");
 
