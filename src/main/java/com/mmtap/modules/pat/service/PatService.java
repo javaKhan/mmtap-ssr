@@ -27,4 +27,6 @@ public interface PatService {
     List getTop(int i);
 
     List analysis_categories(List cat);
+
+    List ana_ipc(PatVo patVo);
 }

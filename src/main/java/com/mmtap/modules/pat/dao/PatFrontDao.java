@@ -125,4 +125,26 @@ public class PatFrontDao {
         List list = query.getResultList();
         return list;
     }
+
+    public List ana_ipc(PatVo vo) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,count(*)+'' as cou from patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) where ipctype_no is not NULL and ipctype_no<>'' ");
+        if (StringUtils.isNotEmpty(vo.getLevel1())) {
+            sb.append(" and ipctype_no like  '%" + vo.getLevel1().trim() + "%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getLevel2())) {
+            sb.append(" and ipctype_no like  '%" + vo.getLevel2().trim() + "%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getProvince())) {
+            sb.append(" and apply_person_address like  '" + vo.getProvince().trim() + "%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getCity())) {
+            sb.append(" and apply_person_address like  '%" + vo.getCity().trim() + "%' ");
+        }
+        sb.append(" group by ipc ");
+        sb.append(" LIMIT 30");
+        Query query = entityManager.createNativeQuery(sb.toString());
+        List list = query.getResultList();
+        return list;
+    }
 }

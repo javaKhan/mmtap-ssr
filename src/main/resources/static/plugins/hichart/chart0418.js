@@ -1,6 +1,10 @@
 
-// 补添该 js 文件 http://patents.weilaigongzuo.com/highcharts/offline-exporting.js
+// 请求函数的简单封装，不建议直接使用
 const request = url => fetch(window.location.origin + url).then(response => response.json())
+
+// const app = new Vue({}).$mount('#app')
+
+// 以下是所有的图形组件
 // 年度专利图形，也可以作为北京地区或者全国地区的统计
 const AnnualPatents = Vue.component('annual_patents', {
   template: '<div id="annualPatents" style="height: 600px"></div>',
@@ -8,11 +12,6 @@ const AnnualPatents = Vue.component('annual_patents', {
     return {
       chart: null
     }
-  },
-  mounted () {
-    request('/patents/annual').then(res => {
-      this.chart = this.render(res.data)
-    })
   },
   methods: {
     exportJPEG(callback) {
@@ -31,7 +30,7 @@ const AnnualPatents = Vue.component('annual_patents', {
         return source[item]
       })
 
-      return Highcharts.chart('annualPatents', {
+      this.chart = Highcharts.chart('annualPatents', {
         chart: {
           type: 'spline'
         },
@@ -83,11 +82,6 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
       chart: ''
     }
   },
-  mounted () {
-    request('/patents/patentee').then(res => {
-      this.chart = this.render(res.data)
-    })
-  },
   methods: {
     exportJPEG(callback) {
       this.chart.exportChartLocal({
@@ -114,7 +108,7 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
           color: colors[Math.floor(Math.random() * colors.length)]
         }
       })
-      return Highcharts.chart('patenteeOwnedNumbers', {
+      this.chart = Highcharts.chart('patenteeOwnedNumbers', {
         chart: {
           type: 'networkgraph'
         },
@@ -161,11 +155,6 @@ const AnalysisCategories = Vue.component('analysis_categories', {
       chart: ''
     }
   },
-  mounted () {
-    request('/patents/analysis_categories').then(res => {
-      this.chart = this.render(res.data)
-    })
-  },
   methods: {
     exportJPEG(callback) {
       this.chart.exportChartLocal({
@@ -178,7 +167,7 @@ const AnalysisCategories = Vue.component('analysis_categories', {
       })
     },
     render(source) {
-      return Highcharts.chart('analysisOfCategories', {
+      this.chart = Highcharts.chart('analysisOfCategories', {
         chart: {
           type: 'column'
         },
@@ -257,11 +246,6 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
       chart: ''
     }
   },
-  mounted () {
-    request('/patents/analysis_categories_network').then(res => {
-      this.chart = this.render(res.data)
-    })
-  },
   methods: {
     exportJPEG(callback) {
       this.chart.exportChartLocal({
@@ -323,7 +307,7 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
           }
         }
       })
-      return Highcharts.chart(analysisOfCategoriesNetwork, {
+      this.chart = Highcharts.chart(analysisOfCategoriesNetwork, {
         chart: {
           type: 'networkgraph',
           height: '100%'
@@ -366,16 +350,6 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
       chart: ''
     }
   },
-  mounted () {
-    request('/patents/categories_comparsion').then(res => {
-      this.chart = this.render(res.data)
-      // this.exportJPEG(function(data) {
-      //   let img = document.createElement('img')
-      //   img.src = data
-      //   document.getElementById('imageContainer').appendChild(img)
-      // })
-    })
-  },
   methods: {
     exportJPEG(callback) {
       this.chart.exportChartLocal({
@@ -402,7 +376,7 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
           color: colors[Math.floor(Math.random() * colors.length)]
         }
       })
-      return Highcharts.chart('mainCategoriesComparsion', {
+      this.chart = Highcharts.chart('mainCategoriesComparsion', {
         chart: {
           type: 'networkgraph'
         },
@@ -447,16 +421,6 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
       chart: null
     }
   },
-  mounted () {
-    request('/patents/network').then(res => {
-      this.chart = this.render(res.data)
-      // this.exportJPEG(function(data) {
-      //   let img = document.createElement('img')
-      //   img.src = data
-      //   document.getElementById('imageContainer').appendChild(img)
-      // })
-    })
-  },
   methods: {
     exportJPEG(callback) {
       this.chart.exportChartLocal({
@@ -492,7 +456,7 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
           }
         }
       })
-      return Highcharts.chart('multipleNetworkOccurrence', {
+      this.chart = Highcharts.chart('multipleNetworkOccurrence', {
         chart: {
           type: 'networkgraph',
           height: '70%',

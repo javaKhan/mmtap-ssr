@@ -244,22 +244,32 @@ public class FrontController {
 
     @RequestMapping("/report/pic")
     public Object  generalPic(PatVo patVo){
+        PatVo patVoAll = new PatVo() ;
+        patVoAll.setLevel1(patVo.getLevel1());
+        patVoAll.setLevel2(patVo.getLevel2());
+
         Map m = new HashMap();
         //专利数量
-        m.put("partArea","1-1");
-        m.put("allArea","1-2");
+        m.put("partArea",patService.annual(patVo));
+        m.put("allArea",patService.annual(patVoAll));
 
-        //专利权人和其所拥有的专利数量
-        m.put("partPerson","2-1");
-        m.put("allPerson","2-2");
-
-        //分类号的数量对比
-        m.put("patIpc","");
-        m.put("allIpc","");
-
-        //多重共现网络
-        m.put("partNet","");
-        m.put("allNet","");
+//        //专利权人和其所拥有的专利数量
+//        List d = patService.patentee(patVo);
+//        List fd = format(d);
+//        m.put("partPerson",fd);
+//        List da = patService.patentee(patVoAll);
+//        List fda = format(da);
+//        m.put("allPerson",fda);
+//
+//        //分类号的数量对比
+//        List idl = format(patService.ana_ipc(patVo));
+//        List idla = format(patService.ana_ipc(patVoAll));
+//        m.put("patIpc",idl);
+//        m.put("allIpc",idla);
+//
+//        //多重共现网络
+//        m.put("partNet",patService.network(patVo));
+//        m.put("allNet",patService.network(patVoAll));
 
         return ResultGenerator.ok(m);
     }

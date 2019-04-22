@@ -126,4 +126,9 @@ public class PatServiceImpl implements PatService {
         List res = patDao.analysis_categories(cat);
         return res;
     }
+
+    @Override
+    public List ana_ipc(PatVo patVo) {
+        return patFrontDao.ana_ipc(patVo);
+    }
 }

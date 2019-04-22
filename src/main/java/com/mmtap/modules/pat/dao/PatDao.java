@@ -1,6 +1,7 @@
 package com.mmtap.modules.pat.dao;
 
 import com.mmtap.modules.pat.model.Patent;
+import com.mmtap.modules.pat.vo.PatVo;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -29,4 +30,5 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
 
     @Query(value = " select * from (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,DATE_FORMAT(apply_date,'%Y') as nian ,COUNT(*) as cou  FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1)  WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) and ipctype_no is not null and ipctype_no<>''  GROUP BY ipc,nian  ) tmp where ipc in (?1) ",nativeQuery = true)
     List analysis_categories(List<String> s);
+
 }

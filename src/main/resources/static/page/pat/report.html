@@ -8,14 +8,17 @@
 
     <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+    <link href="/plugins/busyLoad/app.min.css" rel="stylesheet"/>
     <link href="/app/css/common.css" rel="stylesheet"/>
-
-
 
     <style>
         .row-hight{
             line-height: 30px;
             margin-top: 10px;
+        }
+        .none-area{
+            width: 1px;
+            height: 1px;
         }
     </style>
 
@@ -66,17 +69,27 @@
             <button id="reportBtn" class="btn btn-default">生成报告</button>
         </div>
     </div>
-    <div class="container">
+    <div class="container none-area" >
         <div id="partArea" class="row"></div>
+        <div id="allArea" class="row"></div>
+        <div id="partPerson" class="row"></div>
+        <div id="allPerson" class="row"></div>
+        <div id="partIpc" class="row"></div>
+        <div id="allIpc" class="row"></div>
+        <div id="partNet" class="row"></div>
+        <div id="allNet" class="row"></div>
+    </div>
+    <div>
+        <input id="paf" value="" name="paf">
     </div>
 </div>
 
-
-
 <script src="/plugins/jquery.1.12.4.min.js"></script>
 <script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="/plugins/busyLoad/app.min.js"></script>
 <script src="/plugins/vue/2.3.4/vue.min.js"></script>
 <script src="/plugins/mmtap/jquery.fileDownload.js"></script>
+<script src="/plugins/jquery-confirm/jquery-confirm.min.js"></script>
 
 <script src="/plugins/hichart/highcharts.js"></script>
 <script src="/plugins/hichart/highcharts-more.js"></script>
@@ -87,7 +100,6 @@
 
 <script>
     var ipcs,citys;
-
     //获取表单参数
     function getParam() {
         return {
@@ -100,96 +112,87 @@
     //校验表单参数
     function checkParam() {
         var data = getParam();
-        var isIpc = false;
-        var isCity= false;
-        if(""==data.level2 || null==data.level2){
-            alert("请选择行业二级分类");
+        console.info(data);
+        console.info(""==data.level2 || null==data.level2 || ""==data.city || null==data.city);
+        if(""==data.level2 || null==data.level2 || ""==data.city || null==data.city){
+            $.alert({title:"",content:"请选择IPC一级和二级分类,地区和城市!!!",closeIcon:false})
             return false;
         }else{
-            isIpc=true;
-            if (""==data.city || null==data.city){
-                alert("请选择城市");
-                return false;
-            }else {
-                isCity = true;
-                return true;
-            }
+            return true;
         }
     }
-    function Pic(param) {
-        this.param = param;
-        this.partArea = null;
-        this.allArea = null;
-        this.partPerson = null;
-        this.allPerson = null;
-        this.partIpc = null;
-        this.allIpc = null;
-        this.partNet = null;
-        this.allNet = null;
 
-        //1: partArea
-        //2: allArea
-        //3: partPerson
-        //4: allPerson
-        //5: partIpc
-        //6: allIpc
-        //7: partNet
-        //8: allNet
+    function getRemoteData() {
+        return $.get("/patents/report/pic",getParam());
     }
 
-     $(document).on('click', "#reportBtn",function(){
-        var data = getParam();
-        var parmCheck = checkParam();
-
-        if(parmCheck){
-            //生成图
-            var partArea=new AnnualPatents().$mount("#partArea");
-            $.when($.ajax("/patents/annual")).done(function (res1) {
-                partArea.render(res1.data).exportJPEG(function (pd) {
-                    console.info(pd);
-                    
-                });
-                // console.info(partArea);
-                // partArea.exportJPEG(function (pd) {
-                //     console.info(pd);
-                // });
+    function downloadWord(obj){
+        $.fileDownload("/patents/report/word",
+            {
+                httpMethod: "POST",
+                data: obj,
+                prepareCallback: function (url) {
+                    console.info("图片信息");
+                    console.info(obj);
+                },
+                successCallback: function (url) {
+                    alert("生成报告完成！");
+                    $("#main").busyLoad("hide");
+                },
+                failCallback: function (html, url) {
+                    alert("生成失败，未知的异常。");
+                    $("#main").busyLoad("hide");
+                    $.dialog("生成word失败!")
+                }
             });
-            // var allArea=new AnnualPatents();//.$mount("#partArea");
-            // var partPerson = new PatenteeOwnedPatents();
-            // var allPerson =new PatenteeOwnedPatents();
-            // var patIpc= new PatenteeOwnedPatents();
-            // var allIpc = new PatenteeOwnedPatents();
-            // var partNet = new MultipleNetworkVisualization();
-            // var allNet = new MultipleNetworkVisualization();
+    }
+
+    function Pic() {
+        this.partArea = ""
+        this.allArea="",
+        this.partPerson = "",
+        this.allPerson="",
+        this.patIpc="",
+        this.allIpc="",
+        this.partNet="",
+        this.allNet=""
+    }
 
 
 
+    var pic =new Pic();
+
+    function createPartArea(res) {
+        var dtd1 =$.Deferred();
+        var partArea=new AnnualPatents().$mount("#partArea");
+        partArea.render(res.content.partArea);
+        partArea.exportJPEG(function (pd) {pic.partAreaPic= pd;dtd1.resolve()});
+        return dtd1.promise();
+    }
+    function createAllArea(res) {
+        var dtd =$.Deferred();
+        var allAreaPic=new AnnualPatents().$mount("#allArea");
+        allAreaPic.render(res.content.allArea);
+        allAreaPic.exportJPEG(function (pd) {pic.allAreaPic= pd;dtd.resolve()});
+        return dtd.promise();
+    }
+
+    $(document).on('click', "#reportBtn",function() {
+        if (checkParam()) {
+            $("#main").busyLoad("show");
+            $.get("/patents/report/pic", getParam(), function (res) {
+                $.when(createPartArea(res),
+                    createAllArea(res))
+                    .done(function () {
+                        console.info(pic);
+                        downloadWord(pic);
+                }).fail(function () {
+                    $("#main").busyLoad("hide");
+                    $.dialog("生成图片失败!")
+                });
+            });
         }
-
-
-
-        $.fileDownload("/patents/report/word",{
-            data:{
-                level1:$("#level1").val(),
-                level2:$("#level2").val(),
-                province:$("#province").val(),
-                city:$("#city").val(),
-                level1Name:$("#level1").find("option:selected").text(),
-                level2Name:$("#level2").find("option:selected").text(),
-
-                //图1--图8
-            },
-            prepareCallback:function(url){
-                // alert("正在生成报告,请稍后...");
-            },
-            successCallback:function(url){
-                alert("生成报告完成！");
-            },
-            failCallback:function (html, url) {
-                alert("生成失败，未知的异常。");
-            }
-        });
-    });
+    })
 
     $(document).ready(function () {
         //行业分类
