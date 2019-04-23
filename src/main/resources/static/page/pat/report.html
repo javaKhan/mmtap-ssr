@@ -17,8 +17,8 @@
             margin-top: 10px;
         }
         .none-area{
-            width: 1px;
-            height: 1px;
+            /*width: 1px;*/
+            /*height: 1px;*/
         }
     </style>
 
@@ -78,9 +78,6 @@
         <div id="allIpc" class="row"></div>
         <div id="partNet" class="row"></div>
         <div id="allNet" class="row"></div>
-    </div>
-    <div>
-        <input id="paf" value="" name="paf">
     </div>
 </div>
 
@@ -152,7 +149,7 @@
         this.allArea="",
         this.partPerson = "",
         this.allPerson="",
-        this.patIpc="",
+        this.partIpc="",
         this.allIpc="",
         this.partNet="",
         this.allNet=""
@@ -166,14 +163,56 @@
         var dtd1 =$.Deferred();
         var partArea=new AnnualPatents().$mount("#partArea");
         partArea.render(res.content.partArea);
-        partArea.exportJPEG(function (pd) {pic.partAreaPic= pd;dtd1.resolve()});
+        partArea.exportJPEG(function (pd) {pic.partArea= pd;dtd1.resolve()});
         return dtd1.promise();
     }
     function createAllArea(res) {
         var dtd =$.Deferred();
         var allAreaPic=new AnnualPatents().$mount("#allArea");
         allAreaPic.render(res.content.allArea);
-        allAreaPic.exportJPEG(function (pd) {pic.allAreaPic= pd;dtd.resolve()});
+        allAreaPic.exportJPEG(function (pd) {pic.allArea= pd;dtd.resolve()});
+        return dtd.promise();
+    }
+    function createPartPerson(res) {
+        var dtd1 =$.Deferred();
+        var partPerson=new PatenteeOwnedPatents().$mount("#partPerson");
+        partPerson.render(res.content.partPerson);
+        partPerson.exportJPEG(function (pd) {pic.partPerson= pd;dtd1.resolve()});
+        return dtd1.promise();
+    }
+    function createAllPserson(res) {
+        var dtd =$.Deferred();
+        var allPerson=new PatenteeOwnedPatents().$mount("#allPerson");
+        allPerson.render(res.content.allPerson);
+        allPerson.exportJPEG(function (pd) {pic.allPerson= pd;dtd.resolve()});
+        return dtd.promise();
+    }
+    function createPartIpc(res) {
+        var dtd1 =$.Deferred();
+        var partIpc=new PatenteeOwnedPatents().$mount("#partIpc");
+        partIpc.render(res.content.partIpc);
+        partIpc.exportJPEG(function (pd) {pic.partIpc= pd;dtd1.resolve()});
+        return dtd1.promise();
+    }
+    function createAllIpc(res) {
+        var dtd =$.Deferred();
+        var allIpc=new PatenteeOwnedPatents().$mount("#allIpc");
+        allIpc.render(res.content.allIpc);
+        allIpc.exportJPEG(function (pd) {pic.allIpc= pd;dtd.resolve()});
+        return dtd.promise();
+    }
+    function createPartNet(res) {
+        var dtd1 =$.Deferred();
+        var partNet=new MultipleNetworkVisualization().$mount("#partNet");
+        partNet.render(res.content.partNet);
+        partNet.exportJPEG(function (pd) {pic.partNet= pd;dtd1.resolve()});
+        return dtd1.promise();
+    }
+    function createAllNet(res) {
+        var dtd =$.Deferred();
+        var allNet=new MultipleNetworkVisualization().$mount("#allNet");
+        allNet.render(res.content.allNet);
+        allNet.exportJPEG(function (pd) {pic.allNet= pd;dtd.resolve()});
         return dtd.promise();
     }
 
@@ -182,13 +221,21 @@
             $("#main").busyLoad("show");
             $.get("/patents/report/pic", getParam(), function (res) {
                 $.when(createPartArea(res),
-                    createAllArea(res))
-                    .done(function () {
+                    createAllArea(res),
+                    createPartPerson(res),
+                    createAllPserson(res),
+                    createPartIpc(res),
+                    createAllIpc(res),
+                    createPartNet(res),
+                    createAllNet(res)
+                ).done(function () {
                         console.info(pic);
                         downloadWord(pic);
                 }).fail(function () {
                     $("#main").busyLoad("hide");
                     $.dialog("生成图片失败!")
+                }).done(function () {
+                    $("#main").busyLoad("hide");
                 });
             });
         }

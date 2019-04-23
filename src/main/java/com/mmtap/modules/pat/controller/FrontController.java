@@ -12,6 +12,7 @@ import com.mmtap.modules.pat.service.PatService;
 import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import com.mmtap.modules.pat.vo.RepVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/patents")
+@Slf4j
 public class FrontController {
 
     @Autowired
@@ -253,23 +256,23 @@ public class FrontController {
         m.put("partArea",patService.annual(patVo));
         m.put("allArea",patService.annual(patVoAll));
 
-//        //专利权人和其所拥有的专利数量
-//        List d = patService.patentee(patVo);
-//        List fd = format(d);
-//        m.put("partPerson",fd);
-//        List da = patService.patentee(patVoAll);
-//        List fda = format(da);
-//        m.put("allPerson",fda);
-//
-//        //分类号的数量对比
-//        List idl = format(patService.ana_ipc(patVo));
-//        List idla = format(patService.ana_ipc(patVoAll));
-//        m.put("patIpc",idl);
-//        m.put("allIpc",idla);
-//
-//        //多重共现网络
-//        m.put("partNet",patService.network(patVo));
-//        m.put("allNet",patService.network(patVoAll));
+        //专利权人和其所拥有的专利数量
+        List d = patService.patentee(patVo);
+        List fd = format(d);
+        m.put("partPerson",fd);
+        List da = patService.patentee(patVoAll);
+        List fda = format(da);
+        m.put("allPerson",fda);
+
+//        分类号的数量对比
+        List idl = format(patService.ana_ipc(patVo));
+        List idla = format(patService.ana_ipc(patVoAll));
+        m.put("partIpc",idl);
+        m.put("allIpc",idla);
+
+//        多重共现网络
+        m.put("partNet",patService.network(patVo));
+        m.put("allNet",patService.network(patVoAll));
 
         return ResultGenerator.ok(m);
     }
@@ -281,15 +284,14 @@ public class FrontController {
             dataMap.put("vo",repVo);
 
             //8个图
-
-            dataMap.put("partArea", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-//            dataMap.put("allArea", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("partPerson", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("allPerson", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("patIpc", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("allIpc", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("partNet", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
-//            dataMap.put("allNet", new PictureRenderData(100, 120, ".png", BytePictureUtils.getBufferByteArray(bufferImage)));
+            dataMap.put("partArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("allArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("partPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("allPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("partIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("allIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("partNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("allNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
 
 
             File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp4.docx");
@@ -316,9 +318,16 @@ public class FrontController {
      * @throws Exception
      */
     private BufferedImage GBI(String base64str) throws Exception {
-        byte[] bs = new BASE64Decoder().decodeBuffer(base64str);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bs);
-        BufferedImage bi = ImageIO.read(inputStream);
-        return bi;
+        if (!StringUtils.isEmpty(base64str)){
+            String base64Data =  base64str.split(",")[1];
+            log.info(base64Data);
+            byte[] bs = new BASE64Decoder().decodeBuffer(base64Data);
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(bs);
+            BufferedImage bi = ImageIO.read(inputStream);
+
+            return bi;
+        }
+        return null;
     }
 }
