@@ -112,7 +112,7 @@
     function checkParam() {
         var data = getParam();
         console.info(data);
-        console.info(""==data.level2 || null==data.level2 || ""==data.city || null==data.city);
+        // console.info(""==data.level2 || null==data.level2 || ""==data.city || null==data.city);
         if(""==data.level2 || null==data.level2 || ""==data.city || null==data.city){
             $.alert({title:"",content:"请选择IPC一级和二级分类,地区和城市!!!",closeIcon:false})
             return false;
@@ -166,6 +166,7 @@
         var partArea=new AnnualPatents().$mount("#partArea");
         partArea.render(res.content.partArea);
         partArea.exportJPEG(function (pd) {pic.partArea= pd;dtd1.resolve()});
+        console.info("createPartArea完成")
         return dtd1.promise();
     }
     function createAllArea(res) {
@@ -173,6 +174,7 @@
         var allAreaPic=new AnnualPatents().$mount("#allArea");
         allAreaPic.render(res.content.allArea);
         allAreaPic.exportJPEG(function (pd) {pic.allArea= pd;dtd.resolve()});
+        console.info("createAllArea完成")
         return dtd.promise();
     }
     function createPartPerson(res) {
@@ -180,6 +182,7 @@
         var partPerson=new PatenteeOwnedPatents().$mount("#partPerson");
         partPerson.render(res.content.partPerson);
         partPerson.exportJPEG(function (pd) {pic.partPerson= pd;dtd1.resolve()});
+        console.info("createPartPerson完成")
         return dtd1.promise();
     }
     function createAllPserson(res) {
@@ -187,6 +190,7 @@
         var allPerson=new PatenteeOwnedPatents().$mount("#allPerson");
         allPerson.render(res.content.allPerson);
         allPerson.exportJPEG(function (pd) {pic.allPerson= pd;dtd.resolve()});
+        console.info("createAllPserson 完成")
         return dtd.promise();
     }
     function createPartIpc(res) {
@@ -194,6 +198,7 @@
         var partIpc=new PatenteeOwnedPatents().$mount("#partIpc");
         partIpc.render(res.content.partIpc);
         partIpc.exportJPEG(function (pd) {pic.partIpc= pd;dtd1.resolve()});
+        console.info("createPartIpc 完成")
         return dtd1.promise();
     }
     function createAllIpc(res) {
@@ -201,6 +206,7 @@
         var allIpc=new PatenteeOwnedPatents().$mount("#allIpc");
         allIpc.render(res.content.allIpc);
         allIpc.exportJPEG(function (pd) {pic.allIpc= pd;dtd.resolve()});
+        console.info("createAllIpc 完成")
         return dtd.promise();
     }
     function createPartNet(res) {
@@ -208,6 +214,7 @@
         var partNet=new MultipleNetworkVisualization().$mount("#partNet");
         partNet.render(res.content.partNet);
         partNet.exportJPEG(function (pd) {pic.partNet= pd;dtd1.resolve()});
+        console.info("createPartNet 完成")
         return dtd1.promise();
     }
     function createAllNet(res) {
@@ -215,6 +222,7 @@
         var allNet=new MultipleNetworkVisualization().$mount("#allNet");
         allNet.render(res.content.allNet);
         allNet.exportJPEG(function (pd) {pic.allNet= pd;dtd.resolve()});
+        console.info("createAllNet-完成")
         return dtd.promise();
     }
 
@@ -231,6 +239,7 @@
                     createPartNet(res),
                     createAllNet(res)
                 ).done(function () {
+                    console.info("开始下载")
                         console.info(pic);
                         downloadWord(pic);
                 }).fail(function () {
