@@ -6,7 +6,6 @@ import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.data.MiniTableRenderData;
 import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.RowRenderData;
-import com.deepoove.poi.data.TextRenderData;
 import com.deepoove.poi.data.style.TableStyle;
 import com.deepoove.poi.util.BytePictureUtils;
 import com.mmtap.common.ResultGenerator;
@@ -17,7 +16,6 @@ import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import com.mmtap.modules.pat.vo.RepVo;
 import lombok.extern.slf4j.Slf4j;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -291,8 +289,8 @@ public class FrontController {
             //8个图
             dataMap.put("partArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
             dataMap.put("allArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllArea()))));
-            dataMap.put("areaMin",patService.findAreaMin(repVo.getProvince(),repVo.getCity()));
-            dataMap.put("areaMax",patService.findAreaMax(repVo.getProvince(),repVo.getCity()));
+            dataMap.put("areaMin",patService.findAreaMin(repVo.getProvince(),repVo.getCity(),repVo.getLevel1(),repVo.getLevel2()));
+            dataMap.put("areaMax",patService.findAreaMax(repVo.getProvince(),repVo.getCity(),repVo.getLevel1(),repVo.getLevel2()));
             dataMap.put("allAreaMin",patService.findAllAreaMin());
             dataMap.put("allAreaMax",patService.findAllAreaMax());
 

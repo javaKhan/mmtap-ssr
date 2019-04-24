@@ -133,12 +133,12 @@ public class PatServiceImpl implements PatService {
 
     //导出部分
     @Override
-    public String findAreaMin(String province,String city) {
-        return patDao.findAreaMin(province,city);
+    public String findAreaMin(String province,String city,String level1,String level2) {
+        return patDao.findAreaMin(province,city,level1,level2);
     }
     @Override
-    public String findAreaMax(String province,String city) {
-        return patDao.findAreaMax(province,city);
+    public String findAreaMax(String province,String city,String level1,String level2) {
+        return patDao.findAreaMax(province,city,level1,level2);
     }
     @Override
     public String findAllAreaMin() {

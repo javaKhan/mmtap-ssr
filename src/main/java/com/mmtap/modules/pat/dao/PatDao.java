@@ -33,11 +33,11 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
 
 
 
-    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%')  AND apply_person_address LIKE CONCAT('%',?2,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou LIMIT 1) aa ",nativeQuery = true)
-    String findAreaMin(String province,String city);
+    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%')  AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou LIMIT 1) aa ",nativeQuery = true)
+    String findAreaMin(String province,String city,String level1,String level2);
 
-    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%') AND apply_person_address LIKE CONCAT('%',?2,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1 ) aa ",nativeQuery = true)
-    String findAreaMax(String province,String city);
+    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%') AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1 ) aa ",nativeQuery = true)
+    String findAreaMax(String province,String city,String level1,String level2);
 
     @Query(value = "SELECT ye FROM (SELECT DATE_FORMAT(apply_date,'%Y') AS ye,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou LIMIT 1) aa",nativeQuery = true)
     String findAllAreaMin();

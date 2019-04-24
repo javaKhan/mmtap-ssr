@@ -28,6 +28,7 @@
     <div class="container">
         <div class="row text-center">
             <h3>专利数据分析报告</h3>
+            <h4 style="color: red">由于数据运算及图片生成过程需要稍长时间,请耐心等待!</h4>
         </div>
         <div class="row row-hight">
             <div class="col-md-3 text-right">一级分类</div>
@@ -134,8 +135,8 @@
                     console.info("开始导出word");
                 },
                 successCallback: function (url) {
-                    alert("生成报告完成！");
                     $("#main").busyLoad("hide");
+                    $.dialog("生成word文件完成!")
                 },
                 failCallback: function (html, url) {
                     alert("生成失败，未知的异常。");

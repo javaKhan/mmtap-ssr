@@ -31,8 +31,8 @@ public interface PatService {
     List ana_ipc(PatVo patVo);
 
 
-    String findAreaMin(String province,String city);
-    String findAreaMax(String province,String city);
+    String findAreaMin(String province,String city,String level1,String level2);
+    String findAreaMax(String province,String city,String level1,String level2);
     String findAllAreaMin();
     String findAllAreaMax();
 
