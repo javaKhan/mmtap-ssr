@@ -332,6 +332,7 @@ public class FrontController {
             XWPFTemplate template = XWPFTemplate.compile(templateFile);
             template.render(dataMap);
             String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            response.setHeader("Set-Cookie", "fileDownload=true; path=/");
             response.addHeader("Content-Type", "application/vnd.ms-word");
             response.addHeader("Content-Type", "application/x-msword");
             response.setHeader("Content-Disposition","attachment;filename=report-"+fileName+".docx");

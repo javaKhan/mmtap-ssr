@@ -131,8 +131,7 @@
                 httpMethod: "POST",
                 data: Object.assign(obj,getParam()),
                 prepareCallback: function (url) {
-                    console.info("图片信息");
-                    console.info(obj);
+                    console.info("开始导出word");
                 },
                 successCallback: function (url) {
                     alert("生成报告完成！");
