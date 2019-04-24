@@ -124,6 +124,34 @@
     var ipcs,citys;
     $(document).ready(function () {
 
+        //1 初始化图形
+        $.get("/patents/annual",function (res) {
+            annual_patents.render(res.data);
+        });
+
+        //2
+        $.get("/patents/patentee",function (res) {
+            patentee_owned_patents.render(res.data);
+        });
+        //3-1
+        $.get("/patents/categories_comparsion",function (res) {
+            categories_comparison_analysis.render(res.data);
+        });
+        //3-2
+        $.get("/patents/analysis_categories",function (res) {
+            analysis_categories.render(res.data);
+        });
+        //3-3
+        $.get("/patents/analysis_categories_network",function (res) {
+            analysis_categories_network.render(res.data);
+        });
+        //4
+        $.get("/patents/network",function (res) {
+            multiple_network_visualization.render(res.data);
+            // multiple_network_visualization.$mount("#multiple_network_visualization")
+        });
+
+
         /**
          * IPC分类 和 城市地区 基础数据
          */
@@ -344,20 +372,6 @@
             });
         });
 
-        $("#personQuery").bind("click",function () {
-            var data = {
-                "level1":$("#level1-person").val(),
-                "level2":$("#level2-person").val(),
-                "province":$("#province-person").val(),
-                "city":$("#city-person").val(),
-                "startYear":$("#start-person").val(),
-                "endYear":$("#end-person").val(),
-            };
-            $.get("/patents/patentee",data,function (res) {
-                patentee_owned_patents.render(res.data);
-            });
-        });
-
         $("#flQuery").bind("click",function () {
             var data = {
                 "level1":$("#level1-fl").val(),
@@ -385,8 +399,6 @@
                 multiple_network_visualization.render(res.data);
             });
         });
-
-
 
     })
 </script>

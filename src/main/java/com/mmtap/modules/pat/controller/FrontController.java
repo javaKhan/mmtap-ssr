@@ -3,7 +3,11 @@ package com.mmtap.modules.pat.controller;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.data.MiniTableRenderData;
 import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.data.RowRenderData;
+import com.deepoove.poi.data.TextRenderData;
+import com.deepoove.poi.data.style.TableStyle;
 import com.deepoove.poi.util.BytePictureUtils;
 import com.mmtap.common.ResultGenerator;
 import com.mmtap.modules.pat.dao.PatDao;
@@ -13,6 +17,7 @@ import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import com.mmtap.modules.pat.vo.RepVo;
 import lombok.extern.slf4j.Slf4j;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -285,16 +290,45 @@ public class FrontController {
 
             //8个图
             dataMap.put("partArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("allArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("partPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("allPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("partIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("allIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("partNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
-            dataMap.put("allNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartArea()))));
+            dataMap.put("allArea", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllArea()))));
+            dataMap.put("areaMin",patService.findAreaMin(repVo.getProvince(),repVo.getCity()));
+            dataMap.put("areaMax",patService.findAreaMax(repVo.getProvince(),repVo.getCity()));
+            dataMap.put("allAreaMin",patService.findAllAreaMin());
+            dataMap.put("allAreaMax",patService.findAllAreaMax());
 
 
-            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp4.docx");
+            /**
+             * 申请人部分
+             */
+            dataMap.put("partPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartPerson()))));
+            dataMap.put("allPerson", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllPerson()))));
+            List partPersonTop3 = patService.findPartPersonTop3(repVo.getProvince(),repVo.getCity());
+            List allPersonTop3 = patService.findAllPersonTop3();
+            RowRenderData header = RowRenderData.build("排名",repVo.getCity()+"地区","数量","全球（全国）地区","数量");
+            TableStyle style = new TableStyle();
+            style.setBackgroundColor("ADADAD");
+//            style.setAlign(STJc.CENTER);
+            header.setStyle(style);
+            List<RowRenderData> lineList = formatTable(partPersonTop3,allPersonTop3);
+            dataMap.put("personTable",new MiniTableRenderData(header, lineList));
+
+            /**
+             * IPC图部分
+             */
+            dataMap.put("partIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartIpc()))));
+            dataMap.put("allIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllIpc()))));
+            List partIpc = patService.findPartIpcTop(repVo.getProvince(),repVo.getCity());
+            List allIpc =patService.findAllIpcTop() ;
+            List<RowRenderData> ipcLines = formatTable(partIpc,allIpc);
+            dataMap.put("ipcTable",new MiniTableRenderData(header,ipcLines));
+
+            /**
+             * 网络图部分
+             */
+            dataMap.put("partNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartNet()))));
+            dataMap.put("allNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllNet()))));
+
+            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
             XWPFTemplate template = XWPFTemplate.compile(templateFile);
             template.render(dataMap);
             String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -311,6 +345,28 @@ public class FrontController {
         }
     }
 
+    private List<RowRenderData> formatTable(List bl, List al) {
+        List res = new ArrayList();
+        for(int i=0;i<3;i++){
+            String order = String.valueOf(i+1);
+            String bn = "",bc="";
+            if(bl!=null && bl.size()>i && null!=bl.get(i)){
+                Object[] o = (Object[]) bl.get(i);
+                bn=o[0].toString();
+                bc=String.valueOf(o[1]);
+            }
+            String an = "",ac = "";
+            if(al!=null && al.size()>i && null!=al.get(i)){
+                Object[] o = (Object[]) al.get(i);
+                an=o[0].toString();
+                ac=String.valueOf(o[1]);
+            }
+            RowRenderData line = RowRenderData.build(order,bn,bc,an,ac);
+            res.add(line);
+        }
+        return  res;
+    }
+
     /**
      * 生成二进制图片
      * @param base64str
@@ -320,9 +376,7 @@ public class FrontController {
     private BufferedImage GBI(String base64str) throws Exception {
         if (!StringUtils.isEmpty(base64str)){
             String base64Data =  base64str.split(",")[1];
-            log.info(base64Data);
             byte[] bs = new BASE64Decoder().decodeBuffer(base64Data);
-
             ByteArrayInputStream inputStream = new ByteArrayInputStream(bs);
             BufferedImage bi = ImageIO.read(inputStream);
 

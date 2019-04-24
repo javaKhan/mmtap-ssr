@@ -69,7 +69,7 @@
             <button id="reportBtn" class="btn btn-default">生成报告</button>
         </div>
     </div>
-    <div class="container none-area" >
+    <div class="container none-area" style="display: none" >
         <div id="partArea" class="row"></div>
         <div id="allArea" class="row"></div>
         <div id="partPerson" class="row"></div>
@@ -104,6 +104,8 @@
             level2:$("#level2").val(),
             province:$("#province").val(),
             city:$("#city").val(),
+            level1Name:$("#level1").find("option:selected").text(),
+            level2Name:$("#level2").find("option:selected").text(),
         };
     }
     //校验表单参数
@@ -127,7 +129,7 @@
         $.fileDownload("/patents/report/word",
             {
                 httpMethod: "POST",
-                data: obj,
+                data: Object.assign(obj,getParam()),
                 prepareCallback: function (url) {
                     console.info("图片信息");
                     console.info(obj);
@@ -234,8 +236,6 @@
                 }).fail(function () {
                     $("#main").busyLoad("hide");
                     $.dialog("生成图片失败!")
-                }).done(function () {
-                    $("#main").busyLoad("hide");
                 });
             });
         }

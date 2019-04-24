@@ -29,4 +29,18 @@ public interface PatService {
     List analysis_categories(List cat);
 
     List ana_ipc(PatVo patVo);
+
+
+    String findAreaMin(String province,String city);
+    String findAreaMax(String province,String city);
+    String findAllAreaMin();
+    String findAllAreaMax();
+
+    List findPartPersonTop3(String province, String city);
+
+    List findAllPersonTop3();
+
+    List findPartIpcTop(String province, String city);
+
+    List findAllIpcTop();
 }

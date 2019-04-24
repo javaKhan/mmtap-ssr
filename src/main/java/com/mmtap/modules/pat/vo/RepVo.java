@@ -15,7 +15,7 @@ public class RepVo {
     private String allArea;
     private String partPerson;
     private String allPerson;
-    private String patIpc;
+    private String partIpc;
     private String allIpc;
     private String partNet;
     private String allNet;

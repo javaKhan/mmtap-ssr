@@ -126,9 +126,46 @@ public class PatServiceImpl implements PatService {
         List res = patDao.analysis_categories(cat);
         return res;
     }
-
     @Override
     public List ana_ipc(PatVo patVo) {
         return patFrontDao.ana_ipc(patVo);
+    }
+
+    //导出部分
+    @Override
+    public String findAreaMin(String province,String city) {
+        return patDao.findAreaMin(province,city);
+    }
+    @Override
+    public String findAreaMax(String province,String city) {
+        return patDao.findAreaMax(province,city);
+    }
+    @Override
+    public String findAllAreaMin() {
+        return patDao.findAllAreaMin();
+    }
+    @Override
+    public String findAllAreaMax() {
+        return patDao.findAllAreaMax();
+    }
+
+    @Override
+    public List findPartPersonTop3(String province, String city) {
+        return patDao.findPartPersonTop3(province,city);
+    }
+
+    @Override
+    public List findAllPersonTop3() {
+        return patDao.findAllPersonTop3();
+    }
+
+    @Override
+    public List findPartIpcTop(String province, String city) {
+        return patDao.findPartIpcTop(province,city);
+    }
+
+    @Override
+    public List findAllIpcTop() {
+        return patDao.findAllIpcTop();
     }
 }

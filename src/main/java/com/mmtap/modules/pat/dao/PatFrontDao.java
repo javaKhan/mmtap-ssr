@@ -147,4 +147,13 @@ public class PatFrontDao {
         List list = query.getResultList();
         return list;
     }
+
+//    public String findAllAreaMin() {
+//        String sql = " SELECT ye FROM (SELECT DATE_FORMAT(apply_date,'%Y') AS ye,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1) aa ";
+//        Query query = entityManager.createNativeQuery(sql);
+//        Object obj = query.getSingleResult();
+//        return obj.toString();
+//    }
+
+
 }
