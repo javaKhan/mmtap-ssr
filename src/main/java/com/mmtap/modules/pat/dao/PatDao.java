@@ -2,6 +2,7 @@ package com.mmtap.modules.pat.dao;
 
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.vo.PatVo;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -53,4 +54,7 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
     List findPartIpcTop(String province, String city);
     @Query(value = "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,COUNT(*) AS cou FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) WHERE ipctype_no IS NOT NULL AND ipctype_no<> '' GROUP BY ipc ORDER BY cou DESC LIMIT 3",nativeQuery = true)
     List findAllIpcTop();
+
+//    @Query(value = "",nativeQuery = true)
+//    Page findFulu(String city, String level2);
 }

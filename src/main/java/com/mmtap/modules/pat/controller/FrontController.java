@@ -16,11 +16,15 @@ import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
 import com.mmtap.modules.pat.vo.RepVo;
 import lombok.extern.slf4j.Slf4j;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.system.ApplicationHome;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -36,6 +40,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -305,7 +311,7 @@ public class FrontController {
             RowRenderData header = RowRenderData.build("排名",repVo.getCity()+"地区","数量","全球（全国）地区","数量");
             TableStyle style = new TableStyle();
             style.setBackgroundColor("ADADAD");
-//            style.setAlign(STJc.CENTER);
+            style.setAlign(STJc.CENTER);
             header.setStyle(style);
             List<RowRenderData> lineList = formatTable(partPersonTop3,allPersonTop3);
             dataMap.put("personTable",new MiniTableRenderData(header, lineList));
@@ -316,7 +322,7 @@ public class FrontController {
             dataMap.put("partIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartIpc()))));
             dataMap.put("allIpc", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllIpc()))));
             List partIpc = patService.findPartIpcTop(repVo.getProvince(),repVo.getCity());
-            List allIpc =patService.findAllIpcTop() ;
+            List allIpc =patService.findAllIpcTop();
             List<RowRenderData> ipcLines = formatTable(partIpc,allIpc);
             dataMap.put("ipcTable",new MiniTableRenderData(header,ipcLines));
 
@@ -326,8 +332,26 @@ public class FrontController {
             dataMap.put("partNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getPartNet()))));
             dataMap.put("allNet", new PictureRenderData(600, 600, ".png", BytePictureUtils.getBufferByteArray(GBI(repVo.getAllNet()))));
 
-            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
+            /**
+                附录部分
+             */
+            RowRenderData flHeader = RowRenderData.build("专利名称","申请号","申请日","公开（公告）号","公开（公告）日","IPC分类号","申请（专利权）人","发明人","申请人地址","法律状态生效日","法律状态含");
+            TableStyle flStyle = new TableStyle();
+            flStyle.setBackgroundColor("ADADAD");
+            flStyle.setAlign(STJc.CENTER);
+            flHeader.setStyle(flStyle);
+            Page fuluPage = patService.findFulu(repVo.getProvince(),repVo.getCity(),repVo.getLevel1(),repVo.getLevel2());
+            List<RowRenderData> flLines = formatFulu(fuluPage.getContent());
+            dataMap.put("fulu",new MiniTableRenderData(flHeader,flLines));
+
+
+//            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
+//            XWPFTemplate template = XWPFTemplate.compile(templateFile);
+
+            String tpPath = System.getProperty("user.dir")+"/config/report-tp5.docx";
+            File templateFile = ResourceUtils.getFile(tpPath);
             XWPFTemplate template = XWPFTemplate.compile(templateFile);
+
             template.render(dataMap);
             String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             response.setHeader("Set-Cookie", "fileDownload=true; path=/");
@@ -342,6 +366,21 @@ public class FrontController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private List<RowRenderData> formatFulu(List<Patent> content) {
+        List res = new ArrayList();
+        if(!ObjectUtils.isEmpty(content)){
+            for (Patent p :content){
+                String pd = Optional.ofNullable(p.getPublicDate()).isPresent()? p.getPublicDate().toString():"";
+                String sd = Optional.ofNullable(p.getApplyDate()).isPresent()? p.getApplyDate().toString():"";
+                RowRenderData line = RowRenderData.build(p.getName(),p.getApplyNo(),sd,p.getPublicNo(),pd,
+                        p.getIPCTypeNo(),p.getApplyPerson(),p.getInventor(),p.getApplyPersonAddress(),
+                        p.getLegalEffectiveDate(),p.getLegalEffectiveMeaning());
+                res.add(line);
+            }
+        }
+        return res;
     }
 
     private List<RowRenderData> formatTable(List bl, List al) {

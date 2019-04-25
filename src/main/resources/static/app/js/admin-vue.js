@@ -65,8 +65,6 @@ var data = {
     ],
     //main
     user_menus: [
-        // {title: '个人资料', icon: 'zmdi-account', url: '', isOpenTab: true},
-        // {title: '隐私管理', icon: 'zmdi-face', url: '', isOpenTab: true},
         {title: '退出登录', icon: 'zmdi-run', url: 'logout', isOpenTab: false}
     ],
     user: {
@@ -74,7 +72,7 @@ var data = {
         name: 'bloom'
     },
     menus: [
-        {title: '首页', icon: 'zmdi-home', url: 'home', isOpenTab: true},
+        {title: '首页', icon: 'zmdi-home', url: 'page/home.html', isOpenTab: true},
         {
             title: '系统组织管理', icon: 'zmdi-accounts-list', children: [
             {title: '系统管理', icon: 'zmdi-account', url: 'crud.html', isOpenTab: true}
@@ -89,11 +87,6 @@ var data = {
         {
             title: ' 权限资源管理', icon: 'zmdi-lock-outline', children: [
             {title: '权限管理', icon: '', url: 'page/sys/menu/menus.html', isOpenTab: true},
-        ]
-        },
-        {
-            title: '其他数据管理', icon: 'zmdi-more', children: [
-            {title: '百度', icon: 'zmdi-lock-outline', url: 'https://www.baidu.com/', isOpenTab: true},
         ]
         }
     ]
@@ -121,7 +114,7 @@ var util = {
                 if (obj.id == id) {
                     // console.log(obj)
                     result = obj.children;
-                    // console.log(result)
+                    console.log(result)
                     if (result) {
                         result.forEach(function (item) {
                             item.title = item.name;

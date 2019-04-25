@@ -43,4 +43,8 @@ public interface PatService {
     List findPartIpcTop(String province, String city);
 
     List findAllIpcTop();
+
+    Page findFulu(String province, String city, String level1, String level2);
+
+//    Page findFuluNew(String province, String city, String level1, String level2);
 }

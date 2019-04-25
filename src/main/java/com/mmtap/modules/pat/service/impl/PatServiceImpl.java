@@ -9,6 +9,7 @@ import com.mmtap.modules.pat.vo.PatVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class PatServiceImpl implements PatService {
 
     @Override
     public Page list(Pageable pageable, PatVo patVo) {
-        Specification specification = new Specification() {
+        Specification specification1 = new Specification() {
             @Override
             public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
@@ -58,7 +59,7 @@ public class PatServiceImpl implements PatService {
                 return null;
             }
         };
-        Page page = patDao.findAll(specification,pageable);
+        Page page = patDao.findAll(specification1,pageable);
         return page;
     }
 
@@ -168,4 +169,35 @@ public class PatServiceImpl implements PatService {
     public List findAllIpcTop() {
         return patDao.findAllIpcTop();
     }
+
+    @Override
+    public Page findFulu(String province, String city, String level1, String level2) {
+        Specification specification1 = new Specification() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+//                if (StringUtils.isNotEmpty(level1)){
+//                    predicates.add(criteriaBuilder.notLike(root.<String>get("IPCTypeNo"), "%" + level1 + "%"));
+//                }
+                if (StringUtils.isNotEmpty(level2)){
+                    predicates.add(criteriaBuilder.like(root.<String>get("IPCTypeNo"), "%" + level2 + "%"));
+                }
+//                if (StringUtils.isNotEmpty(province)){
+//                    predicates.add(criteriaBuilder.notLike(root.<String>get("applyPersonAddress"), "%" + province + "%"));
+//                }
+                if (StringUtils.isNotEmpty(city)){
+                    predicates.add(criteriaBuilder.notLike(root.<String>get("applyPersonAddress"), "%" + city + "%"));
+                }
+                query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+
+                return null;
+            }
+        };
+        return patDao.findAll(specification1,new PageRequest(0,100));
+    }
+
+//    @Override
+//    public Page findFuluNew(String province, String city, String level1, String level2) {
+//        return patDao.findFulu(city,level2);
+//    }
 }

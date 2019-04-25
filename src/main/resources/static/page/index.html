@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>专利信息管理系统</title>
+    <title>知识产权大数据分析平台</title>
 
     <link href="plugins/fullPage/jquery.fullPage.css" rel="stylesheet"/>
     <link href="plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
@@ -36,45 +36,10 @@
                 <a href="/">
                     <!--<img src="app/img/logo.png"/>-->
                 </a>
-                <span id="system_title" v-text="title">知识产权信息系统</span>
+                <span id="system_title" v-text="title">知识产权大数据分析平台</span>
             </li>
             <li class="pull-right">
                 <ul class="hi-menu">
-                    <!-- 搜索 -->
-                    <!--<li class="dropdown hidden">-->
-                        <!--<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">-->
-                            <!--<i class="him-icon zmdi zmdi-search"></i>-->
-                        <!--</a>-->
-                        <!--<ul class="dropdown-menu dm-icon pull-right">-->
-                            <!--<form id="search-form" class="form-inline" v-on:submit.prevent="search">-->
-                                <!--<div class="input-group">-->
-                                    <!--<input id="keywords" type="text" :value="search_text" v-model="search_text"-->
-                                           <!--class="form-control" placeholder="搜索"/>-->
-                                    <!--<div class="input-group-btn">-->
-                                        <!--<button type="submit" class="btn btn-default"><span-->
-                                                <!--class="glyphicon glyphicon-search"></span></button>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</form>-->
-                        <!--</ul>-->
-                    <!--</li>-->
-                    <!--<li class="dropdown hidden">-->
-                        <!--<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">-->
-                            <!--<i class="him-icon zmdi zmdi-dropbox"></i>-->
-                        <!--</a>-->
-                        <!--&lt;!&ndash;请选择系统切换&ndash;&gt;-->
-                        <!--<ul class="dropdown-menu dm-icon pull-right">-->
-                            <!--<li class="skin-switch">-->
-                                <!--请选择系统切换-->
-                            <!--</li>-->
-                            <!--<li class="divider"></li>-->
-                            <!--<li v-for="sys in system_list" v-on:click="sys_switch(sys)">-->
-                                <!--<a class="waves-effect switch-systems" href="javascript:;"><i class="zmdi"-->
-                                                                                              <!--:class="sys.icon"></i>-->
-                                    <!--{{sys.title}}</i></a>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
                     <li class="dropdown">
                         <a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
                             <i class="him-icon zmdi zmdi-more-vert"></i>
@@ -84,11 +49,6 @@
                                 <a class="waves-effect" data-ma-action="fullscreen" href="javascript:fullPage();"><i
                                         class="zmdi zmdi-fullscreen"></i> 全屏模式</a>
                             </li>
-                            <!--<li>-->
-                                <!--<a class="waves-effect" data-ma-action="clear-localstorage"-->
-                                   <!--href="javascript:clearCookies();"><i-->
-                                        <!--class="zmdi zmdi-delete"></i> 清除缓存</a>-->
-                            <!--</li>-->
                             <!--菜单-->
                             <li v-for="m in user_menus">
                                 <a v-if='m.isOpenTab' class="waves-effect" href="javascript:;" v-on:click="open_tab(m)"><i
@@ -125,7 +85,18 @@
                 </ul>
             </div>
             <div class="content_main">
-                <!-- 这里存放内容  -->
+                 <!--这里存放内容-->
+                <!--<div id="welcome" class="container text-center">-->
+                    <!--<h4  style="margin-top: 30px">欢迎登陆知识产权大数据分析平台</h4>-->
+                    <!--<div class="text-left" style="padding: 50px 60px;font-size: medium;line-height: 30px">-->
+                        <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本平台提供基于全球专利信息的大数据分析与报告，通过对地域专利的现状分析以及与国际顶尖专利水平的对比，为政府和各届领域提供基于某些领域的经济发展建议，辅助各届决策，主要提供的数据分析方式包括基于地区和领域的专利数量分析、主分类数量对比分析、专利权人及拥有数量分析、多重共现网络可视化分析等，同时可根据以上分析数据自动生成可编辑的分析报告。诚挚欢迎您的使用！-->
+                    <!--</div>-->
+                    <!--<div class="text-right" style="padding: 50px 30px;font-size: medium;line-height: 20px" >知识产权大数据分析平台运营团队</div>-->
+
+                <!--</div>-->
+                <!--<script>Tab.addTab("首页", "page/home.html")</script>-->
+                <div id="iframe_home" class="iframe cur">
+                    <iframe class="tab_iframe cur" src="page/home.html" width="100%" frameborder="0" scrolling="auto" onload="changeFrameHeight(this)" height="571"></iframe></div>
             </div>
         </section>
     </section>
@@ -162,7 +133,7 @@
                     <a v-else='' class="waves-effect" :href="menu.url"><i class="zmdi" :class="menu.icon"></i>
                         {{menu.title}}</a>
                 </li>
-                <li v-else class="sub-menu system_menus ">
+                <li v-else class="sub-menu system_menus toggled">
                     <a class="waves-effect" href="javascript:;"><i class="zmdi" :class="menu.icon"></i>
                         {{menu.title}}</a>
                     <!--菜单-->
