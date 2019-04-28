@@ -264,6 +264,7 @@
             var level1 = $(this).val();
             $.each(ipcs,function (index) {
                if(ipcs[index].code==level1){
+                   $("#level2").empty();
                     $.each(ipcs[index].child,function (i,val) {
                         $("#level2").append("<option value='"+val.code+"'>"+val.name+"</option>");
                     })
@@ -285,6 +286,7 @@
             var province = $(this).val();
             $.each(citys,function (index,obj) {
                 if(index==province){
+                    $("#city").empty();
                     $.each(obj,function (i,val) {
                         $("#city").append("<option value='"+val+"'>"+val+"</option>");
                     })
