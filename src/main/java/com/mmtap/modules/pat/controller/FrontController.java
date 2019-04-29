@@ -234,6 +234,8 @@ public class FrontController {
     public void exepotExce(HttpServletResponse response,PatVo patVo) throws IOException {
         List dataList = patService.exportExcel(patVo);
         ExcelWriter writer = ExcelUtil.getWriter();
+        Map map = getHeaderMap();
+        writer.setHeaderAlias(map);
         writer.write(dataList);
         String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
@@ -241,6 +243,31 @@ public class FrontController {
         ServletOutputStream out=response.getOutputStream();
         writer.flush(out);
         writer.close();
+    }
+
+    private Map getHeaderMap() {
+        Map map = new HashMap();
+        map.put("pid","流水号");
+        map.put("industry","行业");
+        map.put("name","名称");
+        map.put("applyNo","申请号");
+        map.put("tongZu","同族");
+        map.put("yinZheng","引证");
+        map.put("beiYin","被引");
+        map.put("applyDate","申请日");
+        map.put("publicNo","公开（公告）号");
+        map.put("publicDate","公开（公告）日");
+        map.put("IPCTypeNo","IPC分类号");
+        map.put("applyPerson","申请（专利权）人");
+        map.put("inventor","发明人");
+        map.put("priorityNumber","优先权号");
+        map.put("priorityDay","优先权日");
+        map.put("applyPersonAddress","申请人地址");
+        map.put("applyPersonZip","申请人邮编");
+        map.put("legalEffectiveDate","法律状态生效日");
+        map.put("legalEffectiveMeaning","法律状态含义");
+
+        return map;
     }
 
 
