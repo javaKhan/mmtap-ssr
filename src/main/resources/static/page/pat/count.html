@@ -52,8 +52,10 @@
                         <button id="yearQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
                     </div>
                 </div>
-                <!--<annual_patents></annual_patents>-->
-                <div id="annual_patents"></div>
+                <div id="year-empty" class="text-danger text-center" style="font-size: large;margin-top: 50px;display: none">查询结果为空！请输入合适的查询条件</div>
+                <div id="year-pic">
+                    <div id="annual_patents"></div>
+                </div>
             </div>
             <div class="tab-pane fade" id="person">
                 <div class="container-fluid center-block">
@@ -71,7 +73,10 @@
                     </div>
                 </div>
                 <!--<patentee_owned_patents></patentee_owned_patents>-->
-                <div id="patentee_owned_patents"></div>
+                <div id="person-empty" class="text-danger text-center" style="font-size: large;margin-top: 50px;display: none">查询结果为空！请输入合适的查询条件</div>
+                <div id="person-pic">
+                    <div id="patentee_owned_patents"></div>
+                </div>
             </div>
             <div class="tab-pane fade" id="fenlei">
                 <div class="container-fluid center-block">
@@ -88,8 +93,8 @@
                         <button id="flQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
                     </div>
                 </div>
-                <!--<categories_comparison_analysis></categories_comparison_analysis>-->
-                <div id="categories_comparison_analysis"></div>
+                <div id="fenlei-empty" class="text-danger text-center" style="font-size: large;margin: 50px 0px;display: none">查询结果为空！请输入合适的查询条件</div>
+                <div id="fenlei-pic"><div id="categories_comparison_analysis"></div></div>
                 <div id="analysis_categories"></div>
                 <div id="analysis_categories_network"></div>
             </div>
@@ -108,8 +113,8 @@
                         <button id="netQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
                     </div>
                 </div>
-                <!--<multiple_network_visualization></multiple_network_visualization>-->
-                <div id="multiple_network_visualization"></div>
+                <div id="wangluo-empty" class="text-danger text-center" style="font-size: large;margin-top: 50px;display: none">查询结果为空！请输入合适的查询条件</div>
+                <div id="wangluo-pic"><div id="multiple_network_visualization"></div></div>
             </div>
         </div>
     </div>
@@ -124,7 +129,7 @@
     var ipcs,citys;
     $(document).ready(function () {
 
-        //1 初始化图形
+        // 1 初始化图形
         $.get("/patents/annual",function (res) {
             annual_patents.render(res.data);
         });
@@ -148,7 +153,6 @@
         //4
         $.get("/patents/network",function (res) {
             multiple_network_visualization.render(res.data);
-            // multiple_network_visualization.$mount("#multiple_network_visualization")
         });
 
 
@@ -354,7 +358,15 @@
                 "endYear":$("#end-year").val(),
             };
             $.get("/patents/annual",data,function (res) {
-                annual_patents.render(res.data);
+                if (res.data && res.data.length>0){
+                    $("#year-empty").hide();
+                    $("#year-pic").show();
+                    annual_patents.render(res.data);
+
+                }else {
+                    $("#year-empty").show();
+                    $("#year-pic").hide();
+                }
             });
         });
 
@@ -368,7 +380,14 @@
                 "endYear":$("#end-person").val(),
             };
             $.get("/patents/patentee",data,function (res) {
-                patentee_owned_patents.render(res.data);
+                if (res.data && res.data.length>0){
+                    $("#person-empty").hide();
+                    $("#person-pic").show();
+                    patentee_owned_patents.render(res.data);
+                }else {
+                    $("#person-pic").hide();
+                    $("#person-empty").show();
+                }
             });
         });
 
@@ -382,7 +401,14 @@
                 "endYear":$("#end-fl").val(),
             };
             $.get("/patents/categories_comparsion",data,function (res) {
-                categories_comparison_analysis.render(res.data);
+                if (res.data && res.data.length>0){
+                    $("#fenlei-empty").hide();
+                    $("#fenlei-pic").show();
+                    categories_comparison_analysis.render(res.data);
+                }else {
+                    $("#fenlei-pic").hide();
+                    $("#fenlei-empty").show();
+                }
             });
         });
 
@@ -396,7 +422,14 @@
                 "endYear":$("#end-net").val(),
             };
             $.get("/patents/network",data,function (res) {
-                multiple_network_visualization.render(res.data);
+                if (res.data && res.data.length>0){
+                    $("#wangluo-empty").hide();
+                    $("#wangluo-pic").show();
+                    multiple_network_visualization.render(res.data);
+                }else {
+                    $("#wangluo-pic").hide();
+                    $("#wangluo-empty").show();
+                }
             });
         });
 
