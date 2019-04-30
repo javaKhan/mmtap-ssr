@@ -1,34 +1,54 @@
-<!DOCTYPE HTML>
-<html lang="zh-cn">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>通用增删改查</title>
+<!--<!DOCTYPE HTML>-->
+<!--<html lang="zh-cn">-->
+<!--<head>-->
+    <!--<meta charset="utf-8">-->
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <!--<title>通用增删改查</title>-->
 
-    <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/plugins/bootstrap-3.3.0/css/bootstrap-theme.css" rel="stylesheet"/>
-    <link href="/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
-    <link href="/app/css/common.css" rel="stylesheet"/>
-    <link href="/plugins/pekeUpload/custom.css" rel="stylesheet"/>
-    <script src="/plugins/pekeUpload/pekeUpload.min.js"></script>
-</head>
-<body>
-<div id="main">
-    <input id="file" type="file" name="file" />
-    <!--<div class="pekecontainer"></div>-->
-</div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#file").pekeUpload({
-            'btnText': '选择文件',
-            'bootstrap': true,
-            'url': '/pat/upload',
-            'showPercent': true,
-            'showPreview': false,
-            // 'delfiletext': "导入成功",
-        });
-    });
-</script>
-</body>
-</html>
+    <!--<link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>-->
+    <!--<link href="/plugins/bootstrap-3.3.0/css/bootstrap-theme.css" rel="stylesheet"/>-->
+    <!--<link href="/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>-->
+    <!--<link href="/app/css/common.css" rel="stylesheet"/>-->
+    <!--<link href="/plugins/pekeUpload/custom.css" rel="stylesheet"/>-->
+    <!--<script src="/plugins/mmtap/liteuploader.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="main">-->
+    <!--<input id="file" type="file" name="file" class="fileUpload" />-->
+    <!--&lt;!&ndash;<div class="pekecontainer"></div>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button class="">取消</button>&ndash;&gt;-->
+<!--</div>-->
+<!--<script type="text/javascript">-->
+    <!--$(document).ready(function () {-->
+        <!--$("#file").liteUploader({-->
+            <!--url: "/pat/upload",-->
+            <!--singleFileUploads: true-->
+        <!--}).on("lu:success", function (e, {response}) {-->
+            <!--console.info(response);-->
+            <!--if(response.success==1){-->
+                <!--alert("上传成功!")-->
+            <!--}-->
+        <!--}).on("lu:cancelled", function () {-->
+                <!--console.log("upload aborted");-->
+        <!--});-->
+        <!--$("#file").change(function () {-->
+            <!--$(this).data("liteUploader").startUpload();-->
+        <!--});-->
+        <!--$(".cancelBtn").click(function () {-->
+            <!--$(".fileUpload").data("liteUploader").cancelUpload();-->
+        <!--});-->
+    <!--});-->
+    <!--// $(document).ready(function () {-->
+    <!--//     $("#file").pekeUpload({-->
+    <!--//         'btnText': '选择文件',-->
+    <!--//         'bootstrap': true,-->
+    <!--//         'url': '/pat/upload',-->
+    <!--//         'showPercent': true,-->
+    <!--//         'showPreview': false,-->
+    <!--//         // 'delfiletext': "导入成功",-->
+    <!--//     });-->
+    <!--// });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

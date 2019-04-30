@@ -7,25 +7,22 @@
     <title>通用增删改查</title>
 
     <link href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css"
-          rel="stylesheet"/>
+    <link href="/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
     <link href="/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"/>
 
     <link href="/plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
     <link href="/plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
     <link href="/plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
-
+    <link href="/plugins/busyLoad/app.min.css" rel="stylesheet"/>
     <!--select2-->
     <link href="https://cdn.bootcss.com/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-
     <link href="/app/css/common.css" rel="stylesheet"/>
 </head>
 <body>
 <div id="main">
     <div id="toolbar">
-        <a class="btn btn-default waves-effect " href="javascript:;" onclick="importAction()"><i class="zmdi zmdi-plus"></i>
-            导入Excel</a>
-
+        <a class="btn btn-default waves-effect " href="javascript:;" onclick="importAction()">
+            <i class="zmdi zmdi-plus"></i>导入Excel</a>
     </div>
     <table id="table"></table>
 </div>
@@ -37,7 +34,7 @@
 <script src="/plugins/waves-0.7.5/waves.min.js"></script>
 <script src="/plugins/jquery-confirm/jquery-confirm.min.js"></script>
 <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
-
+<script src="/plugins/busyLoad/app.min.js"></script>
 <!--给form使用-->
 <!-- select2 -->
 <script src="https://cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
@@ -148,19 +145,14 @@
             '<a class="detail ml10 text-primary" style="display:inline-block;"  href="javascript:void(0)" data-toggle="tooltip" title="专利详情">详情</a>　',
         ];
     }
-    //
-    // function importAction() {
-    //     console.info("导入");
-    // }
+
     window.actionEvents = {
         'click .detail': function (e, value, row, index) {
             detailDialog(row);
         },
     };
 
-    // var href = location.href;
     function detailDialog(row) {
-        // location.href = href + "#" + row.pid;
         patDetail = $.dialog({
             boxWidth:'80%',
             columnClass: 'medium',
@@ -193,14 +185,53 @@
     }
 
     function importAction() {
-        patDetail = $.dialog({
+        patDetail = $.confirm({
             columnClass: 'medium',
             type: 'blue',
             animationSpeed: 300,
             title: '文件导入',
-            content: 'url:/page/pat/import.html',
-            onContentReady:function () {
-
+            content: '<input id="file" type="file" name="file" />',
+            buttons:{
+                upload:{
+                    text:"上传",
+                    btnClass: 'btn-blue',
+                    action:function () {
+                        var isHave = this.$content.find('#file').val();
+                        if(!isHave){
+                            $.alert('请选择文件');
+                            return false;
+                        }
+                        var formData = new FormData();
+                        formData.append('file', $('#file')[0].files[0]);
+                        $.ajax({
+                            url : '/pat/upload',//这里写你的url
+                            type : 'POST',
+                            data : formData,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            clearForm: true,
+                            success: function(data) {
+                                console.info("上传成功")
+                                $("#main").busyLoad("hide");
+                                $table.bootstrapTable("refresh");
+                                $.alert({title:"上传成功",content:"",autoClose:"ok|3000"});
+                            },
+                            error: function(data, status, e) {  //提交失败自动执行的处理函数。
+                                console.info("上传失败!")
+                                $.alert({title:"导入失败请重试!",content:"",autoClose:"ok|3000"});
+                                console.log(xhr.status, JSON.parse(xhr.responseText));
+                            }
+                        });
+                        console.info("开始上传");
+                        $("#main").busyLoad("show");
+                    }
+                },
+                cancel: {
+                    text:"取消",
+                },
+            },
+        onContentReady:function () {
             }
         });
     }
