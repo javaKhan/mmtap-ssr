@@ -22,7 +22,8 @@ Highcharts.setOptions({
         resetZoomTitle:"恢复图表",
         shortMonths: [ "Jan" , "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec"],
         thousandsSep:",",
-        weekdays: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期天"]
+        weekdays: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期天"],
+        viewFullscreen: '放大到全屏'
     },
     credits: {
         enabled: false // 禁用版权信息
@@ -115,25 +116,80 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
       this.chart.exportChartLocal({
           type: 'image/jpeg',
           filename: 'chart',
-          sourceHeight: 800,
+          sourceWidth: 600,
+          sourceHeight: 600,
           getImgBase64(data) {
             callback && callback(data)
           }
       })
     },
     render(source) {
-      const colors = ['#7cb5ec', '#434348', '#90ed7d', '#7cb5ec']
-      const patenteeNodes = source.map(record => {
+      /**
+       * 0~2 深蓝，半径为 50 40 35
+       * 3~5 普通蓝，半径为 30 28 25
+       * > 5 浅蓝
+       * 5~ 分成 10 份，0: 20, 1~4: 18 15 12 10, 5~9: 5
+       * 0~5 标注名称
+       */
+
+      // 降序排 value 值
+      const descSource = source.sort((a, b) => {
+        if (a.value < b.value) return 1
+        if (a.value > b.value) return -1
+        return 0
+      })
+      const radiusArray = [50, 40, 35, 30, 28, 25]
+
+      /**
+       * 将第 6 份以后的值分为 10 份，每一份填充既定的 size
+       */
+      const increasing = Math.floor((descSource.length - 6) / 10)
+      let pre = 6
+      const sizeMap = [20, 18, 15, 12, 10, 5, 5, 5, 5, 5]
+      const sizeSourceMap = []
+      sizeSourceMap.length = descSource.length
+      for(let i = 0; i < 10; i ++) {
+        sizeSourceMap.fill(sizeMap[i], pre, pre + increasing)
+        pre = pre + increasing
+      }
+      const markSource = descSource.map((record, key) => {
+        // 标注半径
+        record['size'] = sizeSourceMap[key]
+
+        if (key <= 5) {
+          record['size'] = radiusArray[key]
+        }
+
+        // 标注颜色
+        if (key <= 2) {
+          record['color'] = '#195B9E'
+        } else if (key > 2 && key <= 5) {
+          record['color'] = '#488CBC'
+        } else {
+          record['color'] = '#69BAD9'
+        }
+
+        // 标注名称
+        if (key <= 5) {
+          record['label'] = true
+        } else {
+          record['label'] = false
+        }
+        return record
+      })
+
+      const patenteeNodes = markSource.map(record => {
         return {
           id: record.name,
           mass: 1,
           marker: {
-            radius: record.value / 6
+            radius: record.size
           },
           dataLabels: {
-            enabled: record.value < 100 ? false : true,
+            enabled: record.label
           },
-          color: colors[Math.floor(Math.random() * colors.length)]
+          color: record.color,
+          name: `${record.name}: <strong>${record.value}</strong>`
         }
       })
       this.chart = Highcharts.chart('patenteeOwnedNumbers', {
@@ -143,23 +199,17 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
         title: {
           text: '专利权人和其拥有的专利数量'
         },
-        plotOptions: {
-          networkgraph: {
-            turboThreshold: 0,
-            keys: ['from', 'to', 'color']
-          }
-        },
         series: [{
           type: 'networkgraph',
           layoutAlgorithm: {
             enableSimulation: true,
             initialPositions: 'random',
-            // Applied only to links, should be 0
+            // 关联节点的排斥力，需要返回 0
             attractiveForce: function () {
               return 0
             },
             repulsiveForce: function () {
-              return 80
+              return 180
             },
             integration: 'euler',
             // Half of the repulsive force
@@ -168,7 +218,14 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
           nodes: patenteeNodes,
           // No links, only nodes:
           data: []
-        }]
+        }],
+        exporting: {
+          sourceWidth: 600,
+          sourceHeight: 600,
+          chartOptions: {
+            subtitle: null
+          }
+        }
       })
     }
   }
@@ -279,15 +336,19 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
       this.chart.exportChartLocal({
           type: 'image/jpeg',
           filename: 'chart',
-          sourceHeight: 800,
+          sourceWidth: 600,
+          sourceHeight: 600,
           getImgBase64(data) {
             callback && callback(data)
           }
       })
     },
     render(source) {
-      // 按 ipc 所占记录数标红和大小
-      const IPCs = source.reduce((acc, curr) => {
+      /**
+       * 1,2,3 个实心正方形: 20,15,13
+       * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
+       */
+      const multipleIPCs = source.reduce((acc, curr) => {
         if (!acc[curr[0]]) {
           acc[curr[0]] = 1
         } else {
@@ -295,21 +356,49 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
         }
         return acc
       }, {})
-      const IPCsOptions = Object.keys(IPCs).map(ipc => {
+
+      const descIPCs = Object.keys(multipleIPCs).map(ipc => {
         return {
-          id: ipc,
+          name: ipc,
+          value: multipleIPCs[ipc]
+        }
+      }).sort((a, b) => {
+        if (a.value > b.value) return -1
+        if (a.value < b.value) return 1
+        return 0
+      })
+
+      const radiusMap = []
+      radiusMap.length = descIPCs.length
+      radiusMap[0] = 20
+      radiusMap[1] = 15
+      radiusMap[2] = 10
+      const increasing = Math.floor((descIPCs.length - 3) / 6)
+      let pre = 3
+      const sizeMap = [8, 5, 3, 2, 1, 1, 1]
+      for(let i = 0; i < 7; i ++) {
+        radiusMap.fill(sizeMap[i], pre, pre + increasing)
+        pre = pre + increasing
+      }
+
+      const markIPCs = descIPCs.map((ipc, key) => {
+        return {
+          id: ipc.name,
           dataLabels: {
             enabled: true
           },
           marker: {
-            radius: IPCs[ipc] / 5,
-            fillColor: '#f15c80'
-          }
+            radius: radiusMap[key],
+            fillColor: '#f15c80',
+            symbol: key < 2 ? 'square' : 'circle'
+          },
+          name: `${ipc.name}: <strong>${ipc.value}</strong>`
         }
       })
+
       // 显示与所有 ipc 有关的记录的 label，当该记录数的 count >= IPCS.length 的时候就 break 循环
       const patentees = []
-      const ipcsLength = Object.keys(IPCs).length
+      const ipcsLength = Object.keys(multipleIPCs).length
       for (let i = 0; i < source.length; i ++) {
         let count = 0
         for (let x = 0; x < source.length; x ++) {
@@ -335,7 +424,8 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
           }
         }
       })
-      this.chart = Highcharts.chart(analysisOfCategoriesNetwork, {
+
+      this.chart = Highcharts.chart('analysisOfCategoriesNetwork', {
         chart: {
           type: 'networkgraph',
           height: '100%'
@@ -351,7 +441,7 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
             layoutAlgorithm: {
               enableSimulation: true,
               integration: 'euler',
-              linkLength: 60
+              linkLength: 40
             },
             keys: ['from', 'to'],
             marker: {
@@ -361,9 +451,16 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
           }
         },
         series: [{
-          nodes: [...IPCsOptions,...patenteesOptions],
+          nodes: [...markIPCs,...patenteesOptions],
           data: source
-        }]
+        }],
+        exporting: {
+          sourceWidth: 600,
+          sourceHeight: 600,
+          chartOptions: {
+            subtitle: null
+          }
+        }
       })
     }
   }
@@ -383,25 +480,81 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
       this.chart.exportChartLocal({
           type: 'image/jpeg',
           filename: 'chart',
-          sourceHeight: 800,
+          sourceHeight: 600,
+          sourceWidth: 600,
           getImgBase64(data) {
             callback && callback(data)
           }
       })
     },
     render(source) {
-      const colors = ['#7cb5ec', '#434348', '#90ed7d', '#7cb5ec']
-      const recordNodes = source.map(record => {
+      /**
+       * 0~2 深蓝，半径为 50 40 35
+       * 3~5 普通蓝，半径为 30 28 25
+       * > 5 浅蓝
+       * 5~ 分成 10 份，0: 20, 1~4: 18 15 12 10, 5~9: 5
+       * 0~5 标注名称
+       */
+
+      // 降序排 value 值
+      const descSource = source.sort((a, b) => {
+        if (a.value < b.value) return 1
+        if (a.value > b.value) return -1
+        return 0
+      })
+      const radiusArray = [50, 40, 35, 30, 28, 25]
+
+      /**
+       * 将第 6 份以后的值分为 10 份，每一份填充既定的 size
+       */
+      const increasing = Math.floor((descSource.length - 6) / 10)
+      let pre = 6
+      const sizeMap = [20, 18, 15, 12, 10, 5, 5, 5, 5, 5]
+      const sizeSourceMap = []
+      sizeSourceMap.length = descSource.length
+      for(let i = 0; i < 10; i ++) {
+        sizeSourceMap.fill(sizeMap[i], pre, pre + increasing)
+        pre = pre + increasing
+      }
+      const markSource = descSource.map((record, key) => {
+        // 标注半径
+        record['size'] = sizeSourceMap[key]
+
+        if (key <= 5) {
+          record['size'] = radiusArray[key]
+        }
+
+        // 标注颜色
+        // 标注颜色
+        if (key <= 2) {
+          record['color'] = '#195B9E'
+        } else if (key > 2 && key <= 5) {
+          record['color'] = '#488CBC'
+        } else {
+          record['color'] = '#69BAD9'
+        }
+
+        // 标注名称
+        if (key <= 5) {
+          record['label'] = true
+        } else {
+          record['label'] = false
+        }
+        return record
+      })
+
+      const recordNodes = markSource.map(record => {
         return {
           id: record.name,
           mass: 1,
           marker: {
-            radius: record.value / 20
+            radius: record.size
           },
           dataLabels: {
-            enabled: record.value < 100 ? false : true,
+            enabled: record.label
           },
-          color: colors[Math.floor(Math.random() * colors.length)]
+          color: record.color,
+          name: `${record.name}: <strong>${record.value}</strong>`
         }
       })
       this.chart = Highcharts.chart('mainCategoriesComparsion', {
@@ -410,12 +563,6 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
         },
         title: {
           text: '主分类的数量比对'
-        },
-        plotOptions: {
-          networkgraph: {
-            turboThreshold: 0,
-            keys: ['from', 'to', 'color']
-          }
         },
         series: [{
           type: 'networkgraph',
@@ -427,7 +574,7 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
               return 0
             },
             repulsiveForce: function () {
-              return 80
+              return 120
             },
             integration: 'euler',
             // Half of the repulsive force
@@ -436,7 +583,14 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
           nodes: recordNodes,
           // No links, only nodes:
           data: []
-        }]
+        }],
+        exporting: {
+          sourceWidth: 600,
+          sourceHeight: 600,
+          chartOptions: {
+            subtitle: null
+          }
+        }
       })
     }
   }
@@ -454,14 +608,18 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
       this.chart.exportChartLocal({
           type: 'image/jpeg',
           filename: 'chart',
-          sourceHeight: 800,
+          sourceWidth: 600,
+          sourceHeight: 600,
           getImgBase64(data) {
             callback && callback(data)
           }
       })
     },
     render(source) {
-      // 筛选记录数大于 5 的所有专利权人
+      /**
+       * 1,2,3 个实心正方形: 20,15,13
+       * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
+       */
       const multiplePatentees = source.reduce((acc, curr) => {
         if (!acc[curr[0]]) {
           acc[curr[0]] = 1
@@ -470,20 +628,46 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         }
         return acc
       }, {})
-      const filterPatentees = Object.keys(multiplePatentees).filter(patentee => {
-        return multiplePatentees[patentee] > 5
-      }).map(patentee => {
+
+      const descPatentees = Object.keys(multiplePatentees).map(patentee => {
         return {
-          id: patentee,
+          name: patentee,
+          value: multiplePatentees[patentee]
+        }
+      }).sort((a, b) => {
+        if (a.value > b.value) return -1
+        if (a.value < b.value) return 1
+        return 0
+      })
+
+      const radiusMap = []
+      radiusMap.length = descPatentees.length
+      radiusMap[0] = 20
+      radiusMap[1] = 15
+      radiusMap[2] = 10
+      const increasing = Math.floor((descPatentees.length - 3) / 6)
+      let pre = 3
+      const sizeMap = [8, 5, 3, 2, 1, 1, 1]
+      for(let i = 0; i < 7; i ++) {
+        radiusMap.fill(sizeMap[i], pre, pre + increasing)
+        pre = pre + increasing
+      }
+
+      const markPatentees = descPatentees.map((patent, key) => {
+        return {
+          id: patent.name,
           dataLabels: {
             enabled: true
           },
           marker: {
-            radius: multiplePatentees[patentee] / 3,
-            fillColor: '#f15c80'
-          }
+            radius: radiusMap[key],
+            fillColor: '#f15c80',
+            symbol: key < 2 ? 'square' : 'circle'
+          },
+          name: `${patent.name}: <strong>${patent.value}</strong>`
         }
       })
+
       this.chart = Highcharts.chart('multipleNetworkOccurrence', {
         chart: {
           type: 'networkgraph',
@@ -509,9 +693,16 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
           }
         },
         series: [{
-          nodes: [...filterPatentees],
+          nodes: [...markPatentees],
           data: source
-        }]
+        }],
+        exporting: {
+          sourceWidth: 600,
+          sourceHeight: 600,
+          chartOptions: {
+            subtitle: null
+          }
+        }
       })
     }
   }
