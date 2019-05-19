@@ -132,6 +132,11 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
        * 0~5 标注名称
        */
 
+       // 去掉 ;
+       source.forEach(item => {
+        item.name = item.name.replace(';', '')
+       })
+
       // 降序排 value 值
       const descSource = source.sort((a, b) => {
         if (a.value < b.value) return 1
@@ -202,7 +207,7 @@ const PatenteeOwnedPatents = Vue.component('patentee_owned_patents', {
         series: [{
           type: 'networkgraph',
           layoutAlgorithm: {
-            enableSimulation: true,
+            enableSimulation: false,
             initialPositions: 'random',
             // 关联节点的排斥力，需要返回 0
             attractiveForce: function () {
@@ -348,6 +353,12 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
        * 1,2,3 个实心正方形: 20,15,13
        * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
        */
+
+      // 删除 ;
+      source.forEach(item => {
+        item[1] = item[1].replace(';', '')
+      })
+
       const multipleIPCs = source.reduce((acc, curr) => {
         if (!acc[curr[0]]) {
           acc[curr[0]] = 1
@@ -428,7 +439,10 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
       this.chart = Highcharts.chart('analysisOfCategoriesNetwork', {
         chart: {
           type: 'networkgraph',
-          height: '100%'
+          height: '100%',
+          marginBottom: 100,
+          verticalAlign: 'top',
+          align: 'middle'
         },
         title: {
           text: '多重共线网络可视化'
@@ -439,7 +453,7 @@ const AnalysisCategoriesNetwork = Vue.component('analysis_categories_network', {
         plotOptions: {
           networkgraph: {
             layoutAlgorithm: {
-              enableSimulation: true,
+              enableSimulation: false,
               integration: 'euler',
               linkLength: 40
             },
@@ -567,7 +581,7 @@ const CategoriesComparisonAnalysis = Vue.component('categories_comparison_analys
         series: [{
           type: 'networkgraph',
           layoutAlgorithm: {
-            enableSimulation: true,
+            enableSimulation: false,
             initialPositions: 'random',
             // Applied only to links, should be 0
             attractiveForce: function () {
@@ -620,6 +634,12 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
        * 1,2,3 个实心正方形: 20,15,13
        * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
        */
+
+       // 删除 ; 号
+      source.forEach(item => {
+        item[0] = item[0].replace(';', '')
+      })
+
       const multiplePatentees = source.reduce((acc, curr) => {
         if (!acc[curr[0]]) {
           acc[curr[0]] = 1
@@ -640,6 +660,15 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         return 0
       })
 
+      // // 过滤掉 关联度 小于 3 的 source
+      // const only2Patentees = descPatentees.filter(patent => patent.value < 10)
+      // only2Patentees.forEach(patent => {
+      //   source = source.filter(item => {
+      //     return item[0] !== patent.name
+      //   })
+      // })
+      // console.log(source)
+
       const radiusMap = []
       radiusMap.length = descPatentees.length
       radiusMap[0] = 20
@@ -653,11 +682,13 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         pre = pre + increasing
       }
 
+      const limitDisplayPatentValue = descPatentees[4].value
+
       const markPatentees = descPatentees.map((patent, key) => {
         return {
           id: patent.name,
           dataLabels: {
-            enabled: true
+            enabled: patent.value >= limitDisplayPatentValue
           },
           marker: {
             radius: radiusMap[key],
@@ -683,7 +714,7 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
           networkgraph: {
             keys: ['from', 'to'],
             layoutAlgorithm: {
-              enableSimulation: true,
+              enableSimulation: false,
               integration: 'verlet',
               linkLength: 60
             },
