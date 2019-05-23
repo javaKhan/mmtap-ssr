@@ -2,7 +2,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/mmtap-ssr?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=false&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://127.0.0.1:3306/mmtap-pat?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: root
     password: imkzp.com
     type: com.zaxxer.hikari.HikariDataSource
