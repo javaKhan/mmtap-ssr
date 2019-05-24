@@ -46,5 +46,5 @@ public interface PatService {
 
     Page findFulu(String province, String city, String level1, String level2);
 
-//    Page findFuluNew(String province, String city, String level1, String level2);
+    List queryReverse();
 }

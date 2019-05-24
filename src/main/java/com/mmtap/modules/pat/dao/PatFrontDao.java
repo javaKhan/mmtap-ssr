@@ -1,7 +1,11 @@
 package com.mmtap.modules.pat.dao;
 
 import com.mmtap.modules.pat.vo.PatVo;
+import com.mmtap.modules.pat.vo.ReverseItem;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -148,12 +152,13 @@ public class PatFrontDao {
         return list;
     }
 
-//    public String findAllAreaMin() {
-//        String sql = " SELECT ye FROM (SELECT DATE_FORMAT(apply_date,'%Y') AS ye,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1) aa ";
-//        Query query = entityManager.createNativeQuery(sql);
-//        Object obj = query.getSingleResult();
-//        return obj.toString();
-//    }
+    public List queryReverse() {
+        String sql = " SELECT SUBSTRing(t.ipc_type,1,1) AS it, SUBSTRing(t.ipc_type,1,3) AS ipc,YEAR (apply_date) AS nian,count(*) AS sl FROM patent p,pat_type t WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY SUBSTRing(t.ipc_type,1,1) ,SUBSTRing(t.ipc_type,1,3),YEAR (apply_date) ORDER BY it,ipc,nian";
+        Query query = entityManager.createNativeQuery(sql);
+        query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.aliasToBean(ReverseItem.class));
+        List list = query.getResultList();
+        return list;
+    }
 
 
 }

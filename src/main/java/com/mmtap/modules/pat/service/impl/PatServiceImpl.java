@@ -196,8 +196,8 @@ public class PatServiceImpl implements PatService {
         return patDao.findAll(specification1,new PageRequest(0,100));
     }
 
-//    @Override
-//    public Page findFuluNew(String province, String city, String level1, String level2) {
-//        return patDao.findFulu(city,level2);
-//    }
+    @Override
+    public List queryReverse() {
+        return patFrontDao.queryReverse();
+    }
 }
