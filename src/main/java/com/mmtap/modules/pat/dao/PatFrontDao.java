@@ -166,4 +166,30 @@ public class PatFrontDao {
         List list = query.getResultList();
         return list;
     }
+
+    public List queryDisplay(PatVo vo,int type) {
+        StringBuffer sb = new StringBuffer( " SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t," +
+                " (SELECT t.ipc_type AS ipc,count(*) AS sl FROM patent p,pat_type t " +
+                " WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY t.ipc_type ORDER BY sl DESC LIMIT "+type+",1) AS c " +
+                " WHERE p.apply_no=t.pat AND t.ipc_type=c.ipc ");
+        if (StringUtils.isNotEmpty(vo.getLevel1())){
+            sb.append(" AND t.ipc_type LIKE '" +vo.getLevel1()+"%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getLevel2())){
+            sb.append(" AND t.ipc_type LIKE '"+vo.getLevel2()+"%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getProvince())){
+            sb.append(" AND p.apply_person_address LIKE '"+vo.getProvince()+"%' ");
+        }
+        if(StringUtils.isNotEmpty(vo.getCity())){
+            sb.append(" AND p.apply_person_address LIKE '%"+vo.getCity()+"%'  ");
+        }
+        sb.append(" AND YEAR (p.apply_date)>="+vo.getStartYear()+" AND YEAR (p.apply_date)<="+vo.getEndYear()+" LIMIT 20 ");
+
+        System.out.println(sb.toString());
+
+        Query query = entityManager.createNativeQuery(sb.toString());
+        List list = query.getResultList();
+        return list;
+    }
 }

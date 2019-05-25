@@ -49,5 +49,7 @@ public interface PatService {
 
     List queryReverse();
 
-    Map queryDisplay();
+    Map queryDisplay(PatVo vo);
+
+    Map queryDisplay() ;
 }

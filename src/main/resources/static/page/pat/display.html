@@ -21,81 +21,203 @@
     <script src="/plugins/jquery.1.12.4.min.js"></script>
     <script src="/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
     <script src="/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+    <style>
+        .box_line{
+            display: flex;
+            align-items: center;
+            font-size: small;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .input_query{
+            width: 120px;
+        }
+        .myBox{
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
 <div id="main">
-    <table class="table table-condensed table-striped text-center " border="1" id="rev-table">
-        <tr>
-            <td></td>
-            <td></td>
-            <td colspan="10" class="text-center">公开日</td>
-        </tr>
-        <!--<tr><td rowspan="2"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>-->
-        <!--<tr></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>-->
+    <div class="container-fluid center-block">
+        <div class="row box_line">
+            <span class="col-md-01" style="margin:0 15px">行业</span>
+            <select id="level1-year" class="level1 col-md-01 form-control input_query "><option value="">一级分类</option></select></span>
+            <select id="level2-year" class="level2 form-control input_query"><option value="">二级分类</option></select></span>
+            <span style="margin:0 15px">地区</span>
+            <select id="province-year" class="province form-control input_query"><option value="">省</option></select></span>
+            <select id="city-year" class="city form-control input_query"><option value="">市</option></select></span>
+            <span style="margin:0 15px">年限</span>
+            <select id="start-year" class="start form-control input_query"><option value="">年</option></select>
+            <select id="end-year" class="end form-control input_query"><option value="">年</option></select>
+            <button id="displayQuery" class="btn btn-default" style="margin-left: 15px">查询</button>
+        </div>
+    </div>
+    <table class="table table-condensed table-striped text-center myBox" border="1" id="rev-table">
+        <tr><td></td><td></td><td colspan="10" class="text-center">公开日</td></tr>
     </table>
 </div>
 <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
 <script>
     $(document).ready(function () {
-        $.post("/pat/display",function (res) {
-            if (res){
-                console.info(res);
-                var arr = new Array();
-                if(res.length>0){
-                    for(var x=0;x<res.length;x++){
-                        var ipcObj = res[x];
-                        console.info(ipcObj);
-                        if (x==0){
-                            /* head line */
-                            var startYear = ipcObj.startYear;
-                            arr.push("<tr><td valign='middle'>分类号</td><td>专利名称</td>");
-                            while (startYear<=ipcObj.endYear){
-                                arr.push("<td>"+startYear+"</td>")
-                                startYear = startYear+1;
-                            }
-                            arr.push("</tr>");
-                        }
+        /**
+         * IPC分类 和 城市地区 基础数据
+         */
+        //行业分类
+        $.getJSON("/common/ipc",function (res) {
+            ipcs = res.data;
+            // console.info(res.data);
+            $.each(res.data,function (i,val) {
+                $(".level1").append("<option value='"+val.code+"'>"+val.name+"</option>");
+            })
+        });
+        //地区城市
+        $.getJSON("/common/cities",function (res) {
+            citys = res.data;
+            $.each(res.data,function (i) {
+                $(".province").append("<option>"+i+"</option>");
+            })
+        })
 
-                        /*  body line */
-                        for(var y =0 ;y<ipcObj.data.length;y++){
-                            var line  = ipcObj.data[y];
-                            console.info(line);
-                            arr.push("<tr>");
-                            if(0==y){
-                                arr.push("<td valign='middle' style='vertical-align: middle;' rowspan='"+ipcObj.data.length+"'>IPC</td>")
-                            }
-                            // arr.push("<td onclick='detailDialog("+line+")' >"+line[12]+"</td>")
-                            arr.push('<td onclick=detailDialog('+JSON.stringify(line).replace(/\"/g,"'")+')      >'+line[12]+'</td>')
-                            var index = ipcObj.startYear;
-                            while (index<=ipcObj.endYear){
-                                if (line[1]){
-                                    // console.info(line[1].getFullYear());
-                                    var ipcYear = new Date(line[1]).getFullYear();
-                                    if (ipcYear==index){
-                                        arr.push("<td>1</td>");
-                                    }else {
-                                        arr.push("<td></td>");
-                                    }
-                                }else{
-                                    arr.push("<td>0</td>")
-                                }
-                                index = index+1;
-                            }
-                            arr.push("</tr>");
-                        }
-
-
-
-
+        //行业分类级联
+        $("#level1-year").change(function () {
+            var level1 = $(this).val();
+            if(level1){
+                $.each(ipcs,function (index) {
+                    if(ipcs[index].code==level1){
+                        // console.info(ipcs[index].child);
+                        $("#level2-year").empty().append("<option value=''>二级分类</option>");
+                        $.each(ipcs[index].child,function (i,val) {
+                            $("#level2-year").append("<option value='"+val.code+"'>"+val.name+"</option>");
+                        })
                     }
-
-                }
-
-                $("#rev-table").append(arr.join(""));
+                });
+            }else {
+                $("#level2-year").empty().append("<option value=''>二级分类</option>");
             }
+
+        });
+        //城市级联
+        $("#province-year").change(function () {
+            var province = $(this).val();
+            if(province){
+                $.each(citys,function (index,obj) {
+                    if(index==province){
+                        $("#city-year").empty().append("<option value=''>城市</option>");
+                        $.each(obj,function (i,val) {
+                            $("#city-year").append("<option value='"+val+"'>"+val+"</option>");
+                        })
+                    }
+                });
+            }else {
+                // console.info("选择了空省份");
+                $("#city-year").empty().append("<option value=''>城市</option>");
+            }
+        });
+
+        //年度生成
+        var currentYear = new Date().getFullYear();
+        for(var  i=1949;i<=currentYear;i++){
+            $(".start").append("<option value='"+i+"'>"+i+"</option>");
+            $(".end").append("<option value='"+i+"'>"+i+"</option>");
+        }
+
+        /**
+         * 条件查询 数据获取
+         */
+        $("#displayQuery").bind("click",function () {
+            var data = {
+                "level1":$("#level1-year").val(),
+                "level2":$("#level2-year").val(),
+                "province":$("#province-year").val(),
+                "city":$("#city-year").val(),
+                "startYear":$("#start-year").val(),
+                "endYear":$("#end-year").val(),
+            };
+            $.post("/pat/display",data,function (res) {
+                tableFormat(res);
+                // if (res.data && res.data.length>0){
+                //     $("#year-empty").hide();
+                //     $("#year-pic").show();
+                //     annual_patents.render(res.data);
+                //
+                // }else {
+                //     $("#year-empty").show();
+                //     $("#year-pic").hide();
+                // }
+            });
+        });
+
+
+
+        /**
+         *  表格部分
+         */
+        $.post("/pat/display",function (res) {
+            tableFormat(res);
         });
     })
 
+    function tableFormat(res) {
+    // <tr><td></td><td></td><td colspan="10" class="text-center">公开日</td></tr>
+        if (res){
+            console.info(res);
+            $("#rev-table").empty();
+            var arr = new Array();
+            if(res.length>0){
+                for(var x=0;x<res.length;x++){
+                    var ipcObj = res[x];
+                    // console.info(ipcObj);
+                    if (x==0){
+                        /* head line */
+                        var startYear = ipcObj.startYear;
+                        arr.push("<tr><td valign='middle'>分类号</td><td>专利名称</td>");
+                        while (startYear<=ipcObj.endYear){
+                            arr.push("<td>"+startYear+"</td>")
+                            startYear = startYear+1;
+                        }
+                        arr.push("</tr>");
+                    }
+
+                    /*  body line */
+                    for(var y =0 ;y<ipcObj.data.length;y++){
+                        var line  = ipcObj.data[y];
+                        // console.info(line);
+                        arr.push("<tr>");
+                        if(0==y){
+                            arr.push("<td valign='middle' style='vertical-align: middle;' rowspan='"+ipcObj.data.length+"'>"+ipcObj.ipc+"</td>");
+                        }
+                        arr.push('<td class="text-primary" onclick=detailDialog('+JSON.stringify(line).replace(/\"/g,"'")+')      >'+line[12]+'</td>')
+                        var index = ipcObj.startYear;
+                        while (index<=ipcObj.endYear){
+                            if (line[1]){
+                                // console.info(line[1].getFullYear());
+                                var ipcYear = new Date(line[1]).getFullYear();
+                                if (ipcYear==index){
+                                    arr.push('<td class="text-primary" onclick=detailDialog('+JSON.stringify(line).replace(/\"/g,"'") +') >1</td>');
+                                }else {
+                                    arr.push("<td></td>");
+                                }
+                            }else{
+                                arr.push("<td>0</td>")
+                            }
+                            index = index+1;
+                        }
+                        arr.push("</tr>");
+                    }
+
+
+
+
+                }
+
+            }else {
+                arr.push("没有数据");
+            }
+        }
+        $("#rev-table").append(arr.join(""));
+
+    }
 
     window.actionEvents = {
         'click .detail': function (e, value, row) {
@@ -106,7 +228,7 @@
 
     function detailDialog(row) {
         // location.href = href + "#" + row.pid;
-        console.info(row)
+        // console.info(row)
         patDetail = $.dialog({
             boxWidth:'80%',
             columnClass: 'medium',

@@ -153,78 +153,91 @@ public class PatController {
         return map; //上传插件要求成功必须如此返回
     }
 
-//    @RequestMapping("/reverse")
-//    public Object reverse(){
-//        //{"code":"A","name":"农业","data":[{"code",name:"","data":["it":"","":]}]}
-//        List resList = new ArrayList();
-//        List<ReverseItem> res = patService.queryReverse();
-//        List<ReverseItem> items = res.stream().filter(item->StringUtils.isNotEmpty(item.getIpc()) && StringUtils.isNotEmpty(item.getIt())).collect(Collectors.toList());
-//        List<IPC> ipcs = ipcDao.findAll();
-//        final Map ipcMap = ipcs.stream().filter(ipc -> !"".equals(ipc.getCode()) && StringUtils.isNotEmpty(ipc.getName()))
-//                .collect(Collectors.groupingBy(IPC::getCode));
-//        for (Object key :ipcMap.keySet()){
-//            IPC ipc = (IPC) ((List)ipcMap.get(key)).get(0);
-//            ipcMap.put(key,ipc);
-//        }
-//
-//
-//
-//        if (!ObjectUtils.isEmpty(items)){
-//            //一级结点
-//            Map levelOne = items.stream().collect(Collectors.groupingBy(ReverseItem::getIt));
-//            levelOne.forEach((k1,v1)->{
-//                ReverseVo vo = new ReverseVo();
-//                vo.setCode(k1+"");
-//                IPC ipc1 = (IPC)ipcMap.get(k1);
-//                vo.setName(ipc1.getName());
-//
-//                //二级结点
-//                List ipcList = new ArrayList();
-//                List<ReverseItem> v1List = (List<ReverseItem>)v1;
-//                Map leveTwo = v1List.stream().collect(Collectors.groupingBy(ReverseItem::getIpc));
-//
-//                leveTwo.forEach((k2,v2)->{
-//                    ReverseVo item = new ReverseVo();
-//                    IPC ipc2 = (IPC)ipcMap.get(k2);
-//                    item.setCode(k2+"");
-//                    String name2 = "";
-//                    if(null!=ipc2 && StringUtils.isNotEmpty(ipc2.getName())){
-//                        name2 = ipc2.getName();
-//                    }
-//                    item.setName(name2);
-//                    List<ReverseItem> v2List = (ArrayList)v2;
-//                    int currentYear = LocalDate.now().getYear();
-//                    for (int m=0;m<10;m++){
-//                        int indexYear = currentYear-m;
-//                        Long isHave = v2List.stream().filter(i->i.getNian()==indexYear).count();
-//                        if (isHave==0){
-//                            ReverseItem fix = new ReverseItem();
-//                            fix.setNian(indexYear);
-//                            fix.setSl(BigInteger.valueOf(0));
-//                            v2List.add(fix);
-//                        }
-//                    }
-//                    v2List.sort(Comparator.comparing(ReverseItem::getNian));
-//                    item.setData(v2List);
-//                    ipcList.add(item);
-//                });
-//                ipcList.sort(Comparator.comparing(ReverseVo::getCode));
-//                vo.setData(ipcList);
-//                resList.add(vo);
-//            });
-//        }
-//        resList.sort(Comparator.comparing(ReverseVo::getCode));
-//        return resList;
-//    }
+    @RequestMapping("/reverse")
+    public Object reverse(){
+        //{"code":"A","name":"农业","data":[{"code",name:"","data":["it":"","":]}]}
+        List resList = new ArrayList();
+        List<ReverseItem> res = patService.queryReverse();
+        List<ReverseItem> items = res.stream().filter(item->StringUtils.isNotEmpty(item.getIpc()) && StringUtils.isNotEmpty(item.getIt())).collect(Collectors.toList());
+        List<IPC> ipcs = ipcDao.findAll();
+        final Map ipcMap = ipcs.stream().filter(ipc -> !"".equals(ipc.getCode()) && StringUtils.isNotEmpty(ipc.getName()))
+                .collect(Collectors.groupingBy(IPC::getCode));
+        for (Object key :ipcMap.keySet()){
+            IPC ipc = (IPC) ((List)ipcMap.get(key)).get(0);
+            ipcMap.put(key,ipc);
+        }
+
+
+
+        if (!ObjectUtils.isEmpty(items)){
+            //一级结点
+            Map levelOne = items.stream().collect(Collectors.groupingBy(ReverseItem::getIt));
+            levelOne.forEach((k1,v1)->{
+                ReverseVo vo = new ReverseVo();
+                vo.setCode(k1+"");
+                IPC ipc1 = (IPC)ipcMap.get(k1);
+                vo.setName(ipc1.getName());
+
+                //二级结点
+                List ipcList = new ArrayList();
+                List<ReverseItem> v1List = (List<ReverseItem>)v1;
+                Map leveTwo = v1List.stream().collect(Collectors.groupingBy(ReverseItem::getIpc));
+
+                leveTwo.forEach((k2,v2)->{
+                    ReverseVo item = new ReverseVo();
+                    IPC ipc2 = (IPC)ipcMap.get(k2);
+                    item.setCode(k2+"");
+                    String name2 = "";
+                    if(null!=ipc2 && StringUtils.isNotEmpty(ipc2.getName())){
+                        name2 = ipc2.getName();
+                    }
+                    item.setName(name2);
+                    List<ReverseItem> v2List = (ArrayList)v2;
+                    int currentYear = LocalDate.now().getYear();
+                    for (int m=0;m<10;m++){
+                        int indexYear = currentYear-m;
+                        Long isHave = v2List.stream().filter(i->i.getNian()==indexYear).count();
+                        if (isHave==0){
+                            ReverseItem fix = new ReverseItem();
+                            fix.setNian(indexYear);
+                            fix.setSl(BigInteger.valueOf(0));
+                            v2List.add(fix);
+                        }
+                    }
+                    v2List.sort(Comparator.comparing(ReverseItem::getNian));
+                    item.setData(v2List);
+                    ipcList.add(item);
+                });
+                ipcList.sort(Comparator.comparing(ReverseVo::getCode));
+                vo.setData(ipcList);
+                resList.add(vo);
+            });
+        }
+        resList.sort(Comparator.comparing(ReverseVo::getCode));
+        return resList;
+    }
 
     @PostMapping("/display")
     public Object display(PatVo vo){
         List res = new ArrayList();
+        int eny = LocalDate.now().getYear();
+        int sty = eny-9;
+        if (StringUtils.isEmpty(vo.getStartYear()) && StringUtils.isNotEmpty(vo.getEndYear())){
+            sty = Integer.parseInt(vo.getEndYear())-9;
+            eny = Integer.parseInt(vo.getEndYear());
+        }
+        if (StringUtils.isEmpty(vo.getEndYear()) && StringUtils.isNotEmpty(vo.getStartYear())){
+            sty = Integer.parseInt(vo.getStartYear());
+        }
+        vo.setStartYear(sty+"");
+        vo.setEndYear(eny+"");
+        final int startYear = sty;
+        final int endYear = eny;
+        Map r = patService.queryDisplay(vo);
 
 
 
-
-        Map r = patService.queryDisplay();
+//        Map r = patService.queryDisplay();
         r.forEach((k,v)->{
             DisplayVo displayVo = new DisplayVo();
             displayVo.setData(v);
@@ -232,8 +245,8 @@ public class PatController {
             Object[] patInfo = (Object[]) patList.get(0);
             displayVo.setIpc(patInfo[19]+"");
             int currentYear = LocalDate.now().getYear();
-            displayVo.setStartYear(currentYear-9);
-            displayVo.setEndYear(currentYear);
+            displayVo.setStartYear(startYear);
+            displayVo.setEndYear(endYear);
             res.add(displayVo);
         });
         return  res;

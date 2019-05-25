@@ -4,8 +4,8 @@ import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.dao.PatFrontDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
-import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -203,6 +202,10 @@ public class PatServiceImpl implements PatService {
         return patFrontDao.queryReverse();
     }
 
+    /**
+     * 测试方法：如果什么查询条件没有，执行出结果
+     * @return
+     */
     @Override
     public Map queryDisplay() {
         Map res = new HashMap();
@@ -214,6 +217,28 @@ public class PatServiceImpl implements PatService {
         List thr = patFrontDao.queryDisplay(2);
         res.put("thr",thr);
 
+        return res;
+    }
+
+    @Override
+    public Map queryDisplay(PatVo vo) {
+        Map res = new HashMap();
+
+        List one = patFrontDao.queryDisplay(vo,0);
+        if(!org.springframework.util.ObjectUtils.isEmpty(one)){
+            res.put("one",one);
+        }
+
+        if(StringUtils.isEmpty(vo.getLevel2()) && StringUtils.isEmpty(vo.getLevel1())){
+            List two = patFrontDao.queryDisplay(vo,1);
+            if(!org.springframework.util.ObjectUtils.isEmpty(two)){
+                res.put("two",two);
+            }
+            List thr = patFrontDao.queryDisplay(vo,2);
+            if(!org.springframework.util.ObjectUtils.isEmpty(thr)){
+                res.put("thr",thr);
+            }
+        }
         return res;
     }
 }
