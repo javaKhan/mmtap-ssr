@@ -160,5 +160,10 @@ public class PatFrontDao {
         return list;
     }
 
-
+    public List queryDisplay(int i) {
+        String sql = " SELECT p.*,t.ipc_type FROM patent p,pat_type t,(SELECT t.ipc_type AS ipc,count(*) AS sl FROM patent p,pat_type t WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY t.ipc_type ORDER BY sl DESC LIMIT "+i+",1) AS c WHERE p.apply_no=t.pat AND t.ipc_type=c.ipc LIMIT 20 ";
+        Query query = entityManager.createNativeQuery(sql);
+        List list = query.getResultList();
+        return list;
+    }
 }

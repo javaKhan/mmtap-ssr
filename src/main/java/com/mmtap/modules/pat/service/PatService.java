@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PatService {
     void saveImport(List<Patent> pats);
@@ -47,4 +48,6 @@ public interface PatService {
     Page findFulu(String province, String city, String level1, String level2);
 
     List queryReverse();
+
+    Map queryDisplay();
 }

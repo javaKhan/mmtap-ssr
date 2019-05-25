@@ -21,7 +21,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PatServiceImpl implements PatService {
@@ -199,5 +201,19 @@ public class PatServiceImpl implements PatService {
     @Override
     public List queryReverse() {
         return patFrontDao.queryReverse();
+    }
+
+    @Override
+    public Map queryDisplay() {
+        Map res = new HashMap();
+
+        List one = patFrontDao.queryDisplay(0);
+        res.put("one",one);
+        List two = patFrontDao.queryDisplay(1);
+        res.put("two",two);
+        List thr = patFrontDao.queryDisplay(2);
+        res.put("thr",thr);
+
+        return res;
     }
 }
