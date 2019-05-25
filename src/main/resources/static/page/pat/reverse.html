@@ -24,14 +24,64 @@
 </head>
 <body>
 <div id="main">
-    <table class="table table-condensed table-striped">
-
+    <table class="table table-condensed table-striped text-center " border="1" id="rev-table">
+        <tr>
+            <td></td>
+            <td></td>
+            <td colspan="10" class="text-center">公开日</td>
+        </tr>
+        <!--<tr><td rowspan="2"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>-->
+        <!--<tr></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>-->
     </table>
 </div>
 <script>
     $(document).ready(function () {
         $.post("/pat/reverse",function (res) {
-            console.info(res);
+            if (res){
+                var partLine = new Array();
+                var years = res[0].data[0].data;
+                var yearStr =""
+                for(var n =0;n<years.length;n++){
+                    yearStr = yearStr+"<td>"+years[n].nian+"</td>";
+                }
+                partLine.push("<tr><td>主分类</td><td>名称</td>"+yearStr+"</tr>");
+
+                for (var m=0;m<res.length;m++){  //多少个大分类
+                    var lineData = res[m];
+                    // console.info(lineData)
+                    for (var  x =0 ;x<lineData.data.length;x++){ //多少个二级分类
+                        var rowData = lineData.data[x];
+                        console.info(rowData);
+                        partLine.push("<tr>");
+                        if (x==0){
+                            console.info(lineData.name)
+                            if(null!=lineData.name && ""!=lineData.name){
+                                partLine.push("<td  valign='middle' style='vertical-align: middle;' rowspan='"+lineData.data.length+"'>"+lineData.name+"</td>");
+                            }else {
+                                partLine.push("<td  valign='middle' rowspan='"+lineData.data.length+"'>"+lineData.code+"</td>");
+                            }
+                        }
+                        if (rowData.name){
+                            partLine.push("<td>"+rowData.name+"</td>");
+                        }else {
+                            partLine.push("<td>"+rowData.code+"</td>");
+                        }
+                        //partLine.push("<td>1111</td><td>2222</td>")
+                        for (var y = 0;y<rowData.data.length;y++){
+                            var col = rowData.data[y];
+                            // console.info(col)
+                            if (0==col.sl){
+                                partLine.push("<td></td>");
+                            }else {
+                                partLine.push("<td>"+col.sl+"</td>")
+                            }
+                        }
+                        partLine.push("</tr>");
+                    }
+                }
+
+                $("#rev-table").append(partLine.join(""));
+            }
         });
     })
 </script>

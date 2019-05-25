@@ -630,17 +630,50 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
       })
     },
     render(source) {
-      /**
-       * 1,2,3 个实心正方形: 20,15,13
-       * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
-       */
 
-       // 删除 ; 号
+      // 删除 ';' 号
       source.forEach(item => {
         item[0] = item[0].replace(';', '')
       })
 
-      const multiplePatentees = source.reduce((acc, curr) => {
+      const sourceSpread = [];
+      for (let i = 0; i < source.length; i ++) {
+        const patent = source[i][0]
+        const ipc = source[i][1].split(';')
+        sourceSpread.push([patent, ipc[0]])
+        ipc.shift()
+        if (ipc.length > 0) {
+          ipc.forEach(item => {
+            sourceSpread.push([patent, item])
+          })
+        }
+      }
+
+      function filterPatentHandler(limit) {
+        const filterPatents = []
+        for (let i = 0; i < sourceSpread.length; i ++) {
+          let count = 0
+          for (let x = 0; x < sourceSpread.length; x ++) {
+            if (count >= limit) {
+              count = 0
+              filterPatents.push(sourceSpread[i])
+              break
+            }
+            if (sourceSpread[i][0] === sourceSpread[x][0] && sourceSpread[i][1] !== sourceSpread[x][1]) {
+              count ++
+            }
+          }
+        }
+        if (filterPatents.length > 150) {
+          return filterPatentHandler(limit + 1)
+        }
+        return filterPatents
+      }
+      // 过滤出现次数为 3 的值，如果数量大于 150 则 3++ 直到满足条件
+      const limitFilterPatents = filterPatentHandler(3);
+
+      // 对出现次数的 patent 进行统计
+      const multiplePantents = limitFilterPatents.reduce((acc, curr) => {
         if (!acc[curr[0]]) {
           acc[curr[0]] = 1
         } else {
@@ -649,10 +682,10 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         return acc
       }, {})
 
-      const descPatentees = Object.keys(multiplePatentees).map(patentee => {
+      const descPantents = Object.keys(multiplePantents).map(patentee => {
         return {
           name: patentee,
-          value: multiplePatentees[patentee]
+          value: multiplePantents[patentee]
         }
       }).sort((a, b) => {
         if (a.value > b.value) return -1
@@ -660,21 +693,16 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         return 0
       })
 
-      // // 过滤掉 关联度 小于 3 的 source
-      // const only2Patentees = descPatentees.filter(patent => patent.value < 10)
-      // only2Patentees.forEach(patent => {
-      //   source = source.filter(item => {
-      //     return item[0] !== patent.name
-      //   })
-      // })
-      // console.log(source)
-
+      /**
+       * 1,2,3 个实心正方形: 20,15,13
+       * 4,5,6,7,8,9,10 实心圆形：10, 8, 6, 4, 1
+       */
       const radiusMap = []
-      radiusMap.length = descPatentees.length
+      radiusMap.length = descPantents.length
       radiusMap[0] = 20
       radiusMap[1] = 15
       radiusMap[2] = 10
-      const increasing = Math.floor((descPatentees.length - 3) / 6)
+      const increasing = Math.floor((descPantents.length - 3) / 6)
       let pre = 3
       const sizeMap = [8, 5, 3, 2, 1, 1, 1]
       for(let i = 0; i < 7; i ++) {
@@ -682,9 +710,9 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         pre = pre + increasing
       }
 
-      const limitDisplayPatentValue = descPatentees[4].value
+      const limitDisplayPatentValue = descPantents[4].value
 
-      const markPatentees = descPatentees.map((patent, key) => {
+      const markPantents = descPantents.map((patent, key) => {
         return {
           id: patent.name,
           dataLabels: {
@@ -724,8 +752,8 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
           }
         },
         series: [{
-          nodes: [...markPatentees],
-          data: source
+          nodes: [...markPantents],
+          data: limitFilterPatents
         }],
         exporting: {
           sourceWidth: 600,

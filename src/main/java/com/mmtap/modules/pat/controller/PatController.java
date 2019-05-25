@@ -170,15 +170,16 @@ public class PatController {
         if (!ObjectUtils.isEmpty(items)){
             //一级结点
             Map levelOne = items.stream().collect(Collectors.groupingBy(ReverseItem::getIt));
-            levelOne.keySet().stream().forEach(key->{
+            levelOne.forEach((k1,v1)->{
                 ReverseVo vo = new ReverseVo();
-                vo.setCode(key+"");
-                IPC ipc1 = (IPC)ipcMap.get(key);
+                vo.setCode(k1+"");
+                IPC ipc1 = (IPC)ipcMap.get(k1);
                 vo.setName(ipc1.getName());
 
                 //二级结点
                 List ipcList = new ArrayList();
-                Map leveTwo = items.stream().collect(Collectors.groupingBy(ReverseItem::getIpc));
+                List<ReverseItem> v1List = (List<ReverseItem>)v1;
+                Map leveTwo = v1List.stream().collect(Collectors.groupingBy(ReverseItem::getIpc));
 
                 leveTwo.forEach((k2,v2)->{
                     ReverseVo item = new ReverseVo();
@@ -205,30 +206,12 @@ public class PatController {
                     item.setData(v2List);
                     ipcList.add(item);
                 });
-
+                ipcList.sort(Comparator.comparing(ReverseVo::getCode));
                 vo.setData(ipcList);
                 resList.add(vo);
             });
         }
-
-
-
-
-
-
-//        final Map ipcMap = ipcs.stream().filter(ipc -> !"".equals(ipc.getCode()) && StringUtils.isNotEmpty(ipc.getName()))
-//                .collect(Collectors.groupingBy(IPC::getCode));
-
-//        m = res.stream().map(ri->{
-//                IPC ipc = (IPC) ipcMap.get(ri.getIpc());
-//                String ipcName = "";
-//                if (null!=ipc && StringUtils.isNotEmpty(ipc.getName())){
-//                    ipcName = ipc.getName();
-//                }
-//                ri.setIpcName(ipcName);
-//                return ri;
-//                })
-//                .collect(Collectors.groupingBy(ReverseItem::getIpc));
+        resList.sort(Comparator.comparing(ReverseVo::getCode));
         return resList;
     }
 }
