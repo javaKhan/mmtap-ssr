@@ -18,13 +18,10 @@ import com.mmtap.modules.pat.vo.RepVo;
 import lombok.extern.slf4j.Slf4j;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.system.ApplicationHome;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -40,8 +37,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -343,6 +338,35 @@ public class FrontController {
             List<RowRenderData> lineList = formatTable(partPersonTop3,allPersonTop3);
             dataMap.put("personTable",new MiniTableRenderData(header, lineList));
 
+
+            /**
+             * 热门主分类专利明细表
+             */
+            RowRenderData ipcTopHeader = RowRenderData.build("公开号","法律状态含义","专利名称","专利权人","IPC分类","公开日","国家","地区");
+            ipcTopHeader.setStyle(style);
+            List dbList = patService.table4IpcTop(repVo);
+            List<RowRenderData> ipcTopList = new ArrayList();
+            dbList.forEach(item->{
+                Object[] temp = (Object[] )item;
+                String appNo = Optional.ofNullable(temp[3]).isPresent()?temp[3].toString():"";
+                String hy = Optional.ofNullable(temp[11]).isPresent()?temp[11].toString():"";;
+                String name =Optional.ofNullable(temp[12]).isPresent()?temp[12].toString():"";;
+                String person=Optional.ofNullable(temp[9]).isPresent()?temp[9].toString():"";;
+                String ipc = Optional.ofNullable(temp[19]).isPresent()?temp[19].toString():"";;
+                String pubDate = Optional.ofNullable(temp[15]).isPresent()?temp[15].toString():"";;
+//                String gj=Optional.ofNullable(temp[3]).isPresent()?temp[3].toString():"";;
+                String city = Optional.ofNullable(temp[6]).isPresent()?temp[6].toString().replace(";",""):"";
+                if (!StringUtils.isEmpty(repVo.getCity())){
+                    city = city+repVo.getCity();
+                }
+                RowRenderData row = RowRenderData.build(appNo,hy,name,person,ipc,pubDate,"CN",city);
+                ipcTopList.add(row);
+            });
+            dataMap.put("ipcTopTable",new MiniTableRenderData(ipcTopHeader, ipcTopList));
+
+
+
+
             /**
              * IPC图部分
              */
@@ -372,12 +396,12 @@ public class FrontController {
             dataMap.put("fulu",new MiniTableRenderData(flHeader,flLines));
 
 
-//            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
-//            XWPFTemplate template = XWPFTemplate.compile(templateFile);
-
-            String tpPath = System.getProperty("user.dir")+"/config/report-tp5.docx";
-            File templateFile = ResourceUtils.getFile(tpPath);
+            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
             XWPFTemplate template = XWPFTemplate.compile(templateFile);
+
+//            String tpPath = System.getProperty("user.dir")+"/config/report-tp5.docx";
+//            File templateFile = ResourceUtils.getFile(tpPath);
+//            XWPFTemplate template = XWPFTemplate.compile(templateFile);
 
             template.render(dataMap);
             String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());

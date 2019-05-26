@@ -132,7 +132,8 @@ public class PatFrontDao {
 
     public List ana_ipc(PatVo vo) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,count(*)+'' as cou from patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) where ipctype_no is not NULL and ipctype_no<>'' ");
+//        sb.append("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,count(*)+'' as cou from patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) where ipctype_no is not NULL and ipctype_no<>'' ");
+        sb.append(" SELECT t.ipc_type AS ipc,count(*) as cou FROM pat_type t,patent p WHERE p.apply_no=t.pat and p.ipctype_no is not NULL and ipctype_no<>'' ");
         if (StringUtils.isNotEmpty(vo.getLevel1())) {
             sb.append(" and ipctype_no like  '%" + vo.getLevel1().trim() + "%' ");
         }
@@ -147,6 +148,7 @@ public class PatFrontDao {
         }
         sb.append(" group by ipc ");
         sb.append(" LIMIT 30");
+        System.out.println("===>"+sb.toString());
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;
@@ -184,9 +186,13 @@ public class PatFrontDao {
         if(StringUtils.isNotEmpty(vo.getCity())){
             sb.append(" AND p.apply_person_address LIKE '%"+vo.getCity()+"%'  ");
         }
-        sb.append(" AND YEAR (p.apply_date)>="+vo.getStartYear()+" AND YEAR (p.apply_date)<="+vo.getEndYear()+" LIMIT 20 ");
-
-        System.out.println(sb.toString());
+        if (StringUtils.isNotEmpty(vo.getStartYear())){
+            sb.append(" AND YEAR (p.apply_date)>="+vo.getStartYear() );
+        }
+        if (StringUtils.isNotEmpty(vo.getEndYear())){
+            sb.append(" AND YEAR (p.apply_date)<="+vo.getEndYear());
+        }
+        sb.append(" LIMIT 20 ");
 
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();

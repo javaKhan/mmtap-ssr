@@ -1,7 +1,10 @@
 package com.mmtap.modules.pat.service;
 
+import com.deepoove.poi.data.RowRenderData;
 import com.mmtap.modules.pat.model.Patent;
+import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
+import com.mmtap.modules.pat.vo.RepVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -52,4 +55,6 @@ public interface PatService {
     Map queryDisplay(PatVo vo);
 
     Map queryDisplay() ;
+
+    List<RowRenderData> table4IpcTop(RepVo repVo);
 }

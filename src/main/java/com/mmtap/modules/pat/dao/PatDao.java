@@ -17,19 +17,23 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
 //            nativeQuery = true)
 //    List annual(String condition);
 
-    @Query(value = "SELECT ipc,apply_person FROM (SELECT ipc,apply_person,count(*) AS cou FROM (" +
-            " SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,apply_person " +
-            " FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) " +
-            " WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR)) tmp GROUP BY ipc,apply_person ORDER BY cou DESC LIMIT 30) res ",nativeQuery = true)
+//    @Query(value = "SELECT ipc,apply_person FROM (SELECT ipc,apply_person,count(*) AS cou FROM (" +
+//            " SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,apply_person " +
+//            " FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) " +
+//            " WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR)) tmp GROUP BY ipc,apply_person ORDER BY cou DESC LIMIT 30) res ",nativeQuery = true)
+    @Query(nativeQuery = true,
+    value = "SELECT t.ipc_type AS ipc,apply_person FROM pat_type t,patent p WHERE p.apply_no=t.pat AND p.apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) GROUP BY ipc,apply_person ORDER BY count(*) DESC LIMIT 30 ")
     List analysis_categories_network();
 
-    @Query(value = "SELECT ipc from ( SELECT ipc,count(*) AS cou FROM ( " +
-            " SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,DATE_FORMAT(apply_date,'%Y') as nian " +
-            " FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) " +
-            " WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) ) tmp GROUP BY ipc ORDER BY cou desc LIMIT ?1 )res ",nativeQuery = true)
+    @Query(nativeQuery = true,
+    value = " SELECT t.ipc_type as ipc from pat_type t ,patent p where p.apply_no= t.pat and p.apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) GROUP BY t.ipc_type order by COUNT(*) desc LIMIT ?1 ")
     List getTopIPC(int x);
 
-    @Query(value = " select * from (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,DATE_FORMAT(apply_date,'%Y') as nian ,COUNT(*) as cou  FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1)  WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) and ipctype_no is not null and ipctype_no<>''  GROUP BY ipc,nian  ) tmp where ipc in (?1) ",nativeQuery = true)
+
+
+
+//    @Query(value = " select * from (SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,DATE_FORMAT(apply_date,'%Y') as nian ,COUNT(*) as cou  FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1)  WHERE apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) and ipctype_no is not null and ipctype_no<>''  GROUP BY ipc,nian  ) tmp where ipc in (?1) ",nativeQuery = true)
+    @Query(value = " SELECT t.ipc_type AS ipc,DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM pat_type t,patent p WHERE p.apply_no=t.pat AND p.apply_date> DATE_SUB(NOW(),INTERVAL 10 YEAR) AND t.ipc_type IN (?1) GROUP BY ipc,nian ",nativeQuery = true)
     List analysis_categories(List<String> s);
 
 
@@ -50,9 +54,10 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
     @Query(value = "SELECT apply_person,COUNT(*) as cou from patent GROUP BY apply_person ORDER BY cou desc limit 3" ,nativeQuery = true)
     List findAllPersonTop3();
 
-    @Query(value = "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,COUNT(*) as cou FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1)  WHERE ipctype_no is not null and ipctype_no<>'' and apply_person_address like CONCAT(?1,'%') and apply_person_address LIKE CONCAT('%',?2,'%') GROUP BY ipc ORDER BY cou desc limit 3",nativeQuery = true)
+
+    @Query(value = " SELECT t.ipc_type AS ipc,count(*) as cou FROM pat_type t,patent p WHERE p.apply_no=t.pat and ipctype_no is not null and ipctype_no<>'' and apply_person_address like CONCAT(?1,'%') and apply_person_address LIKE CONCAT('%',?2,'%') GROUP BY ipc ORDER BY count(*) desc limit 3",nativeQuery = true)
     List findPartIpcTop(String province, String city);
-    @Query(value = "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(p.ipctype_no,';',b.help_topic_id+1),';',-1) AS ipc,COUNT(*) AS cou FROM patent p JOIN mysql.help_topic b ON b.help_topic_id< (length(p.ipctype_no)-length(REPLACE (p.ipctype_no,';',''))+1) WHERE ipctype_no IS NOT NULL AND ipctype_no<> '' GROUP BY ipc ORDER BY cou DESC LIMIT 3",nativeQuery = true)
+    @Query(value = " SELECT t.ipc_type AS ipc,count(*) as cou FROM pat_type t,patent p WHERE p.apply_no=t.pat and ipctype_no IS NOT NULL AND ipctype_no<> '' GROUP BY ipc ORDER BY count(*) DESC LIMIT 3",nativeQuery = true)
     List findAllIpcTop();
 
 //    @Query(value = "",nativeQuery = true)

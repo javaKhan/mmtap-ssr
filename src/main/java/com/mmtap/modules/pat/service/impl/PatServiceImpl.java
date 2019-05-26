@@ -1,10 +1,13 @@
 package com.mmtap.modules.pat.service.impl;
 
+import com.deepoove.poi.data.RowRenderData;
 import com.mmtap.modules.pat.dao.PatDao;
 import com.mmtap.modules.pat.dao.PatFrontDao;
 import com.mmtap.modules.pat.model.Patent;
 import com.mmtap.modules.pat.service.PatService;
+import com.mmtap.modules.pat.vo.CatVo;
 import com.mmtap.modules.pat.vo.PatVo;
+import com.mmtap.modules.pat.vo.RepVo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,5 +243,16 @@ public class PatServiceImpl implements PatService {
             }
         }
         return res;
+    }
+
+    @Override
+    public List<RowRenderData> table4IpcTop(RepVo repVo) {
+        PatVo patVo = new PatVo();
+        patVo.setLevel1(repVo.getLevel1());
+        patVo.setLevel2(repVo.getLevel2());
+        patVo.setProvince(repVo.getProvince());
+        patVo.setCity(repVo.getCity());
+        List one = patFrontDao.queryDisplay(patVo,0);
+        return one;
     }
 }
