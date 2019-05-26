@@ -396,12 +396,12 @@ public class FrontController {
             dataMap.put("fulu",new MiniTableRenderData(flHeader,flLines));
 
 
-            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
-            XWPFTemplate template = XWPFTemplate.compile(templateFile);
-
-//            String tpPath = System.getProperty("user.dir")+"/config/report-tp5.docx";
-//            File templateFile = ResourceUtils.getFile(tpPath);
+//            File templateFile = ResourceUtils.getFile("classpath:static/tp/report-tp5.docx");
 //            XWPFTemplate template = XWPFTemplate.compile(templateFile);
+
+            String tpPath = System.getProperty("user.dir")+"/config/report-tp5.docx";
+            File templateFile = ResourceUtils.getFile(tpPath);
+            XWPFTemplate template = XWPFTemplate.compile(templateFile);
 
             template.render(dataMap);
             String fileName= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());

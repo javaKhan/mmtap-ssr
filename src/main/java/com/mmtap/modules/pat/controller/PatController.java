@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -222,17 +223,29 @@ public class PatController {
         List res = new ArrayList();
         int eny = LocalDate.now().getYear();
         int sty = eny-9;
+        //开始年分为空  ：结束年份不为空
         if (StringUtils.isEmpty(vo.getStartYear()) && StringUtils.isNotEmpty(vo.getEndYear())){
             sty = Integer.parseInt(vo.getEndYear())-9;
             eny = Integer.parseInt(vo.getEndYear());
+            vo.setStartYear(sty+"");
+            vo.setEndYear(eny+"");
         }
+        //结束年份为空  ： 开始年份不为空
         if (StringUtils.isEmpty(vo.getEndYear()) && StringUtils.isNotEmpty(vo.getStartYear())){
             sty = Integer.parseInt(vo.getStartYear());
+            vo.setStartYear(sty+"");
+            vo.setEndYear(eny+"");
         }
-        vo.setStartYear(sty+"");
-        vo.setEndYear(eny+"");
-        final int startYear = sty;
-        final int endYear = eny;
+        //开始和结束年份都为空
+        if (StringUtils.isEmpty(vo.getEndYear()) && StringUtils.isEmpty(vo.getStartYear())){
+            vo.setStartYear(sty+"");
+            vo.setEndYear(eny+"");
+        }
+        //开始和结束都不为空
+//        if (StringUtils.isNotEmpty(vo.getEndYear()) && StringUtils.isNotEmpty(vo.getStartYear())){
+//            vo.setStartYear(sty+"");
+//            vo.setEndYear(eny+"");
+//        }
         Map r = patService.queryDisplay(vo);
 
 
@@ -244,9 +257,8 @@ public class PatController {
             List patList = (List)v;
             Object[] patInfo = (Object[]) patList.get(0);
             displayVo.setIpc(patInfo[19]+"");
-            int currentYear = LocalDate.now().getYear();
-            displayVo.setStartYear(startYear);
-            displayVo.setEndYear(endYear);
+            displayVo.setStartYear(Integer.parseInt(vo.getStartYear()));
+            displayVo.setEndYear(Integer.parseInt(vo.getEndYear()));
             res.add(displayVo);
         });
         return  res;
