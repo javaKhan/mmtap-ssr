@@ -699,24 +699,26 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
        */
       const radiusMap = []
       radiusMap.length = descPantents.length
-      radiusMap[0] = 20
-      radiusMap[1] = 15
-      radiusMap[2] = 10
-      const increasing = Math.floor((descPantents.length - 3) / 6)
-      let pre = 3
-      const sizeMap = [8, 5, 3, 2, 1, 1, 1]
-      for(let i = 0; i < 7; i ++) {
-        radiusMap.fill(sizeMap[i], pre, pre + increasing)
-        pre = pre + increasing
-      }
+      const length = radiusMap.length;
+      if (length > 0) radiusMap[0] = 20
+      if (length > 1) radiusMap[1] = 15
+      if (length > 2) radiusMap[2] = 10
 
-      const limitDisplayPatentValue = descPantents[4].value
+      if (length > 3) {
+        const increasing = Math.floor((descPantents.length - 3) / 6)
+        let pre = 3
+        const sizeMap = [8, 5, 3, 2, 1, 1, 1]
+        for(let i = 0; i < 7; i ++) {
+          radiusMap.fill(sizeMap[i], pre, pre + increasing)
+          pre = pre + increasing
+        }
+      }
 
       const markPantents = descPantents.map((patent, key) => {
         return {
           id: patent.name,
           dataLabels: {
-            enabled: patent.value >= limitDisplayPatentValue
+            enabled: patent.value >= ((descPantents[4] && descPantents[4].value) || 0)
           },
           marker: {
             radius: radiusMap[key],
