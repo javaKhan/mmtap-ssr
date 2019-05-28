@@ -94,44 +94,54 @@ public class PatController {
                 List<CsvRow> rows = data.getRows();
                 for (int i=1;i<rows.size();i++){
                     CsvRow row = rows.get(i);
+                    if(row.size()!=19){
+                        continue;
+                    }
                     log.info(row.getFieldCount()+"列  "+row.toString());
-                    Patent pat = new Patent();
-                    pat.setName(row.get(1));
-                    pat.setIndustry("");
-                    pat.setApplyNo(row.get(2));
-                    pat.setTongZu(row.get(3));
-                    pat.setYinZheng(row.get(4));
-                    pat.setBeiYin(row.get(5));
-                    if (StringUtils.isNotEmpty(row.get(6))){
-                        pat.setApplyDate(dateFormat.parse(row.get(6)));
-                    }
-                    pat.setPublicNo(row.get(7));
-                    if (StringUtils.isNotEmpty(row.get(8))){
-                        pat.setPublicDate(dateFormat.parse(row.get(8)));
-                    }
-                    pat.setIPCTypeNo(row.get(9));
-                    pat.setApplyPerson(row.get(10));
-                    pat.setInventor(row.get(11));
-                    pat.setPriorityNumber(row.get(12));
-                    pat.setPriorityDay(row.get(13));
-                    pat.setApplyPersonAddress(row.get(14));
-                    pat.setApplyPersonZip(row.get(15));
-                    pat.setLegalEffectiveDate(row.get(17));
-                    pat.setLegalEffectiveMeaning(row.get(18));
-                    log.info(pat.toString());
-                    pats.add(pat);
-                    //类型规约
-                    if(StringUtils.isNotEmpty(pat.getIPCTypeNo())){
-                        String[] patTypes = pat.getIPCTypeNo().split("[;]");
-                        for (int m=0;m<patTypes.length;m++){
-                            PatType pt = new PatType();
-                            pt.setPat(pat.getApplyNo());
-                            pt.setIpcType(patTypes[m]);
-                            patTypeList.add(pt);
+
+                    try {
+                        Patent pat = new Patent();
+                        pat.setName(row.get(1));
+                        pat.setIndustry("");
+                        pat.setApplyNo(row.get(2));
+                        pat.setTongZu(row.get(3));
+                        pat.setYinZheng(row.get(4));
+                        pat.setBeiYin(row.get(5));
+                        if (StringUtils.isNotEmpty(row.get(6))){
+                            pat.setApplyDate(dateFormat.parse(row.get(6)));
                         }
-//                        patTypeService.saveTypes(patTypeList);
+                        pat.setPublicNo(row.get(7));
+                        if (StringUtils.isNotEmpty(row.get(8))){
+                            pat.setPublicDate(dateFormat.parse(row.get(8)));
+                        }
+                        pat.setIPCTypeNo(row.get(9));
+                        pat.setApplyPerson(row.get(10));
+                        pat.setInventor(row.get(11));
+                        pat.setPriorityNumber(row.get(12));
+                        pat.setPriorityDay(row.get(13));
+                        pat.setApplyPersonAddress(row.get(14));
+                        pat.setApplyPersonZip(row.get(15));
+                        pat.setLegalEffectiveDate(row.get(17));
+                        pat.setLegalEffectiveMeaning(row.get(18));
+                        log.info(pat.toString());
+
+                        pats.add(pat);
+                        //类型规约
+                        if(StringUtils.isNotEmpty(pat.getIPCTypeNo())){
+                            String[] patTypes = pat.getIPCTypeNo().split("[;]");
+                            for (int m=0;m<patTypes.length;m++){
+                                PatType pt = new PatType();
+                                pt.setPat(pat.getApplyNo());
+                                pt.setIpcType(patTypes[m]);
+                                patTypeList.add(pt);
+                            }
+    //                        patTypeService.saveTypes(patTypeList);
+                        }
+
+                    }catch (Exception e){
+                        log.info("异常数据==>>"+row.toString());
+//                        continue;
                     }
-//                    patService.savePatent(pat);
 
                     if(i%2000==0){
                         patTypeService.saveTypes(patTypeList);
