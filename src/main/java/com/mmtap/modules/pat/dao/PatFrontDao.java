@@ -170,10 +170,31 @@ public class PatFrontDao {
     }
 
     public List queryDisplay(PatVo vo,int type) {
-        StringBuffer sb = new StringBuffer( " SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t," +
-                " (SELECT t.ipc_type AS ipc,count(*) AS sl FROM patent p,pat_type t " +
-                " WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY t.ipc_type ORDER BY sl DESC LIMIT "+type+",1) AS c " +
-                " WHERE p.apply_no=t.pat AND t.ipc_type=c.ipc ");
+//        StringBuffer sb = new StringBuffer( " SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t," +
+//                " (SELECT t.ipc_type AS ipc,count(*) AS sl FROM patent p,pat_type t " +
+//                " WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY t.ipc_type ORDER BY sl DESC LIMIT "+type+",1) AS c " +
+//                " WHERE p.apply_no=t.pat AND t.ipc_type=c.ipc ");
+
+        StringBuilder topSql= new StringBuilder();
+        topSql.append(" SELECT ipc from pat_top where 1=1 ");// nian>year(now())-10 order by cou desc LIMIT "+type+",1 ");
+        if (StringUtils.isNotEmpty(vo.getLevel1())){
+            topSql.append(" AND ipc LIKE '" +vo.getLevel1()+"%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getLevel2())){
+            topSql.append(" AND ipc LIKE '"+vo.getLevel2()+"%' ");
+        }
+        if (StringUtils.isNotEmpty(vo.getStartYear())){
+            topSql.append(" AND nian>="+vo.getStartYear() );
+        }
+        if (StringUtils.isNotEmpty(vo.getEndYear())){
+            topSql.append(" AND nian<="+vo.getEndYear() );
+        }
+        topSql.append("  order by cou desc LIMIT "+type+",1 ");
+
+
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(" SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t WHERE p.apply_no=t.pat AND t.ipc_type=( " + topSql.toString()+" )  ");
         if (StringUtils.isNotEmpty(vo.getLevel1())){
             sb.append(" AND t.ipc_type LIKE '" +vo.getLevel1()+"%' ");
         }

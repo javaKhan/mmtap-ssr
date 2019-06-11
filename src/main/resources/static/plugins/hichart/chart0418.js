@@ -664,12 +664,9 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
             }
           }
         }
-        if (filterPatents.length > 150) {
-          return filterPatentHandler(limit + 1)
-        }
         return filterPatents
       }
-      // 过滤出现次数为 3 的值，如果数量大于 150 则 3++ 直到满足条件
+      // 过滤出现次数为 3 的值，如果数量大于 150 则 3++ 直到满足条件 -> 放弃
       const limitFilterPatents = filterPatentHandler(3);
 
       // 对出现次数的 patent 进行统计
