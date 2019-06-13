@@ -636,30 +636,30 @@ const MultipleNetworkVisualization = Vue.component('multiple_network_visualizati
         item[0] = item[0].replace(';', '')
       })
 
-      const sourceSpread = [];
-      for (let i = 0; i < source.length; i ++) {
-        const patent = source[i][0]
-        const ipc = source[i][1].split(';')
-        sourceSpread.push([patent, ipc[0]])
-        ipc.shift()
-        if (ipc.length > 0) {
-          ipc.forEach(item => {
-            sourceSpread.push([patent, item])
-          })
-        }
-      }
+      // const sourceSpread = [];
+      // for (let i = 0; i < source.length; i ++) {
+      //   const patent = source[i][0]
+      //   const ipc = source[i][1].split(';')
+      //   sourceSpread.push([patent, ipc[0]])
+      //   ipc.shift()
+      //   if (ipc.length > 0) {
+      //     ipc.forEach(item => {
+      //       sourceSpread.push([patent, item])
+      //     })
+      //   }
+      // }
 
       function filterPatentHandler(limit) {
         const filterPatents = []
-        for (let i = 0; i < sourceSpread.length; i ++) {
+        for (let i = 0; i < source.length; i ++) {
           let count = 0
-          for (let x = 0; x < sourceSpread.length; x ++) {
+          for (let x = 0; x < source.length; x ++) {
             if (count >= limit) {
               count = 0
-              filterPatents.push(sourceSpread[i])
+              filterPatents.push(source[i])
               break
             }
-            if (sourceSpread[i][0] === sourceSpread[x][0] && sourceSpread[i][1] !== sourceSpread[x][1]) {
+            if (source[i][0] === source[x][0] && source[i][1] !== source[x][1]) {
               count ++
             }
           }
