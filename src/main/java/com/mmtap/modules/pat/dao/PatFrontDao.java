@@ -40,7 +40,7 @@ public class PatFrontDao {
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
             sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
         }
-        sb.append(" GROUP BY DATE_FORMAT(apply_date,'%Y') ");
+        sb.append(" GROUP BY DATE_FORMAT(apply_date,'%Y') order by year ");
         Query query = entityManager.createNativeQuery(sb.toString());
         List list = query.getResultList();
         return list;
