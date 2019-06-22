@@ -51,7 +51,7 @@ public class LogService {
                 log.setExceptionInfo(ex.getClass() + ex.getMessage());
             }
             log.setExecuteUseMillisecond(executeUseMillisecond);
-            service.execute(() -> logRepository.save(log));
+//            service.execute(() -> logRepository.save(log));
         }
     }
 }

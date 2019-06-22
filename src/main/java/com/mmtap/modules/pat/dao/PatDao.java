@@ -38,15 +38,15 @@ public interface PatDao extends PagingAndSortingRepository<Patent,String>,JpaSpe
 
 
 
-    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%')  AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou LIMIT 1) aa ",nativeQuery = true)
+    @Query(value = "SELECT YEAR (apply_date) AS nian FROM patent WHERE apply_date IS NOT NULL AND apply_person_address LIKE CONCAT(?1,'%')  AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY YEAR(apply_date) ORDER BY count(*) LIMIT 1 ",nativeQuery = true)
     String findAreaMin(String province,String city,String level1,String level2);
 
-    @Query(value = "select nian from (SELECT DATE_FORMAT(apply_date,'%Y') AS nian,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' AND apply_person_address LIKE CONCAT(?1,'%') AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1 ) aa ",nativeQuery = true)
+    @Query(value = "SELECT YEAR(apply_date) AS nian FROM patent WHERE apply_date IS NOT NULL AND apply_person_address LIKE CONCAT(?1,'%') AND apply_person_address LIKE CONCAT('%',?2,'%') and ipctype_no like  CONCAT('%',?3,'%') and ipctype_no like  CONCAT('%',?4,'%') GROUP BY YEAR(apply_date) ORDER BY count(*) DESC LIMIT 1 ",nativeQuery = true)
     String findAreaMax(String province,String city,String level1,String level2);
 
-    @Query(value = "SELECT ye FROM (SELECT DATE_FORMAT(apply_date,'%Y') AS ye,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou LIMIT 1) aa",nativeQuery = true)
+    @Query(value = "SELECT YEAR(apply_date) AS ye FROM patent WHERE apply_date IS NOT NULL GROUP BY YEAR(apply_date) ORDER BY count(*) LIMIT 1 ",nativeQuery = true)
     String findAllAreaMin();
-    @Query(value = "SELECT ye FROM (SELECT DATE_FORMAT(apply_date,'%Y') AS ye,count(*) AS cou FROM patent WHERE apply_date IS NOT NULL AND apply_date<> '' GROUP BY DATE_FORMAT(apply_date,'%Y') ORDER BY cou DESC LIMIT 1) aa",nativeQuery = true)
+    @Query(value = "SELECT YEAR(apply_date) AS ye FROM patent WHERE apply_date IS NOT NULL GROUP BY YEAR(apply_date) ORDER BY count(*) DESC LIMIT 1 ",nativeQuery = true)
     String findAllAreaMax();
 
     @Query(value = "SELECT apply_person,COUNT(*) as cou from patent where apply_person_address LIKE CONCAT(?1,'%') and apply_person_address like CONCAT('%',?2,'%') GROUP BY apply_person ORDER BY cou desc limit 3" ,nativeQuery = true)
