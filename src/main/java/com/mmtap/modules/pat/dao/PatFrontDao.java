@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PatFrontDao {
@@ -170,11 +171,10 @@ public class PatFrontDao {
     }
 
     public List queryDisplay(PatVo vo,int type) {
-//        StringBuffer sb = new StringBuffer( " SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t," +
-//                " (SELECT t.ipc_type AS ipc,count(*) AS sl FROM patent p,pat_type t " +
-//                " WHERE p.apply_no=t.pat AND YEAR (p.apply_date)> YEAR (now())-10 GROUP BY t.ipc_type ORDER BY sl DESC LIMIT "+type+",1) AS c " +
-//                " WHERE p.apply_no=t.pat AND t.ipc_type=c.ipc ");
 
+        /**
+         * 专为ADS修改 ，sql执行方式
+         */
         StringBuilder topSql= new StringBuilder();
         topSql.append(" SELECT ipc from pat_top where 1=1 ");// nian>year(now())-10 order by cou desc LIMIT "+type+",1 ");
         if (StringUtils.isNotEmpty(vo.getLevel1())){
@@ -191,32 +191,37 @@ public class PatFrontDao {
         }
         topSql.append("  order by cou desc LIMIT "+type+",1 ");
 
+        Query ipcTypeItemQuery = entityManager.createNativeQuery(topSql.toString());
+        List ipcTypeList = ipcTypeItemQuery.getResultList();
+        if (ipcTypeList.size()>0){
+            String iptType = ipcTypeList.get(0).toString();
 
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t WHERE p.apply_no=t.pat AND t.ipc_type='" + iptType+"' ");
+            if (StringUtils.isNotEmpty(vo.getLevel1())){
+                sb.append(" AND t.ipc_type LIKE '" +vo.getLevel1()+"%' ");
+            }
+            if (StringUtils.isNotEmpty(vo.getLevel2())){
+                sb.append(" AND t.ipc_type LIKE '"+vo.getLevel2()+"%' ");
+            }
+            if (StringUtils.isNotEmpty(vo.getProvince())){
+                sb.append(" AND p.apply_person_address LIKE '"+vo.getProvince()+"%' ");
+            }
+            if(StringUtils.isNotEmpty(vo.getCity())){
+                sb.append(" AND p.apply_person_address LIKE '%"+vo.getCity()+"%'  ");
+            }
+            if (StringUtils.isNotEmpty(vo.getStartYear())){
+                sb.append(" AND YEAR (p.apply_date)>="+vo.getStartYear() );
+            }
+            if (StringUtils.isNotEmpty(vo.getEndYear())){
+                sb.append(" AND YEAR (p.apply_date)<="+vo.getEndYear());
+            }
+            sb.append(" LIMIT 20 ");
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(" SELECT DISTINCT p.*,t.ipc_type FROM patent p,pat_type t WHERE p.apply_no=t.pat AND t.ipc_type=( " + topSql.toString()+" )  ");
-        if (StringUtils.isNotEmpty(vo.getLevel1())){
-            sb.append(" AND t.ipc_type LIKE '" +vo.getLevel1()+"%' ");
+            Query query = entityManager.createNativeQuery(sb.toString());
+            List list = query.getResultList();
+            return list;
         }
-        if (StringUtils.isNotEmpty(vo.getLevel2())){
-            sb.append(" AND t.ipc_type LIKE '"+vo.getLevel2()+"%' ");
-        }
-        if (StringUtils.isNotEmpty(vo.getProvince())){
-            sb.append(" AND p.apply_person_address LIKE '"+vo.getProvince()+"%' ");
-        }
-        if(StringUtils.isNotEmpty(vo.getCity())){
-            sb.append(" AND p.apply_person_address LIKE '%"+vo.getCity()+"%'  ");
-        }
-        if (StringUtils.isNotEmpty(vo.getStartYear())){
-            sb.append(" AND YEAR (p.apply_date)>="+vo.getStartYear() );
-        }
-        if (StringUtils.isNotEmpty(vo.getEndYear())){
-            sb.append(" AND YEAR (p.apply_date)<="+vo.getEndYear());
-        }
-        sb.append(" LIMIT 20 ");
-
-        Query query = entityManager.createNativeQuery(sb.toString());
-        List list = query.getResultList();
-        return list;
+        return null;
     }
 }
