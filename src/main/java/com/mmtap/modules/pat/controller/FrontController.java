@@ -210,10 +210,10 @@ public class FrontController {
 
     //5 列表显示
     @RequestMapping("/list")
-    public Page<Patent> findList(@RequestParam(defaultValue = "20") int limit ,@RequestParam(defaultValue = "0") int offset,PatVo patVo){
-        Pageable pageable = getPageable(limit,offset,"pid");
-        Page page = patService.list(pageable,patVo);
-        return page;
+    public Page<Patent> findList(@RequestParam(defaultValue = "20") int size ,@RequestParam(defaultValue = "0") int page,PatVo patVo){
+        Pageable pageable = getPageable(size,page,"pid");
+        Page pageRes = patService.list(pageable,patVo);
+        return pageRes;
     }
 
     @RequestMapping("/detail")
