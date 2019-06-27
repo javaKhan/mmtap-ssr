@@ -205,8 +205,9 @@ public class FrontController {
 
     //5 列表显示
     @RequestMapping("/list")
-    public Page<Patent> findList(@RequestParam(defaultValue = "20") int size ,@RequestParam(defaultValue = "0") int page,PatVo patVo){
-        Pageable pageable = getPageable(size,page,"pid");
+    public Page<Patent> findList(Pageable pageable,PatVo patVo){
+//    public Page<Patent> findList(@RequestParam(defaultValue = "20") int size ,@RequestParam(defaultValue = "0") int page,PatVo patVo){
+//        Pageable pageable = new PageableImpl(size,page,"pid");
         Page pageRes = patService.list(pageable,patVo);
         return pageRes;
     }
