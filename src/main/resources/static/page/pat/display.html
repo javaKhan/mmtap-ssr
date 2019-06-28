@@ -1,4 +1,3 @@
-<!DOCTYPE HTML>
 <html lang="zh-cn">
 <head>
     <meta charset="utf-8">
@@ -182,19 +181,22 @@
                     /*  body line */
                     for(var y =0 ;y<ipcObj.data.length;y++){
                         var line  = ipcObj.data[y];
-                        // console.info(line);
+                        var lineData = encodeURI(JSON.stringify(line));
+                        // console.info("stringify："+JSON.stringify(line));
+                        // console.info("stringify encode："+encodeURI(JSON.stringify(line)));
+                        // console.info("stringify decode："+decodeURI(encodeURI(JSON.stringify(line))));
+
                         arr.push("<tr>");
                         if(0==y){
                             arr.push("<td valign='middle' style='vertical-align: middle;' rowspan='"+ipcObj.data.length+"'>"+ipcObj.ipc+"</td>");
                         }
-                        arr.push('<td class="text-primary" onclick=detailDialog('+JSON.stringify(line).replace(/\"/g,"'")+')      >'+line[12]+'</td>')
+                        arr.push('<td class="text-primary" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >'+line[12]+'</td>')
                         var index = ipcObj.startYear;
                         while (index<=ipcObj.endYear){
                             if (line[1]){
-                                // console.info(line[1].getFullYear());
                                 var ipcYear = new Date(line[1]).getFullYear();
                                 if (ipcYear==index){
-                                    arr.push('<td class="text-primary" onclick=detailDialog('+JSON.stringify(line).replace(/\"/g,"'") +') >1</td>');
+                                    arr.push('<td class="text-primary" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >1</td>');
                                 }else {
                                     arr.push("<td></td>");
                                 }
@@ -227,8 +229,8 @@
 
 
     function detailDialog(row) {
-        // location.href = href + "#" + row.pid;
-        // console.info(row)
+        // console.info(row);
+        row = JSON.parse(decodeURI(row));
         patDetail = $.dialog({
             boxWidth:'80%',
             columnClass: 'medium',
