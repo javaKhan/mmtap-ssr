@@ -188,15 +188,15 @@
 
                         arr.push("<tr>");
                         if(0==y){
-                            arr.push("<td valign='middle' style='vertical-align: middle;' rowspan='"+ipcObj.data.length+"'>"+ipcObj.ipc+"</td>");
+                            arr.push("<td valign='middle' class='small' style='vertical-align: middle;' rowspan='"+ipcObj.data.length+"'>"+ipcObj.ipc+"</td>");
                         }
-                        arr.push('<td class="text-primary" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >'+line[12]+'</td>')
+                        arr.push('<td class="text-primary small" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >'+line[12]+'</td>')
                         var index = ipcObj.startYear;
                         while (index<=ipcObj.endYear){
                             if (line[1]){
                                 var ipcYear = new Date(line[1]).getFullYear();
                                 if (ipcYear==index){
-                                    arr.push('<td class="text-primary" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >1</td>');
+                                    arr.push('<td class="text-primary small" onmouseover="this.style.cursor=\'hand\'" onclick=detailDialog("'+lineData+'") >1</td>');
                                 }else {
                                     arr.push("<td></td>");
                                 }

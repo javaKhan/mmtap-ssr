@@ -266,17 +266,6 @@ public class FrontController {
         return map;
     }
 
-
-    //将前端分页参数进行转换
-    public static Pageable getPageable(int limit,
-                                       int offset,
-                                       String properties) {
-        int page = offset / limit;
-        int size = limit;
-        Sort sort = new Sort(Sort.Direction.ASC, properties);
-        return PageRequest.of(page, size, sort);
-    }
-
     @RequestMapping("/report/pic")
     public Object  generalPic(PatVo patVo){
         PatVo patVoAll = new PatVo() ;

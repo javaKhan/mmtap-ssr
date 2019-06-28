@@ -198,7 +198,10 @@
                     action:function () {
                         var isHave = this.$content.find('#file').val();
                         if(!isHave){
-                            $.alert('请选择文件');
+                            $.dialog({
+                                title: '导入',
+                                content: '请选择文件!',
+                            })
                             return false;
                         }
                         var formData = new FormData();

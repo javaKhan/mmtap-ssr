@@ -33,10 +33,12 @@
                             <div class="input-group">
                                 <span style="font-size: small;margin: 0 15px">行业:</span>
                                 <select class="form-control" name="level1" id="level1" style="max-width: 150px">
-                                    <option value="">一级分类</option>
+<!--                                    <option value="">一级分类</option>-->
+                                    <option value="" selected="selected" style='display:none;'>一级分类</option>
                                 </select>
                                 <select class="form-control" name="level2" id="level2" style="max-width: 150px">
-                                    <option value="">二级分类</option>
+<!--                                    <option value="">二级分类</option>-->
+                                    <option value="" selected="selected" style='display:none;'>二级分类</option>
                                 </select>
 
                             </div>
@@ -228,18 +230,6 @@
         });
     }
 
-    // function importAction() {
-    //     patDetail = $.dialog({
-    //         columnClass: 'medium',
-    //         type: 'blue',
-    //         animationSpeed: 300,
-    //         title: '文件导入',
-    //         content: 'url:/page/pat/import.html',
-    //         onContentReady:function () {
-    //
-    //         }
-    //     });
-    // }
 
     var ipcs,citys;
     //查询
@@ -247,23 +237,48 @@
         $('#table').bootstrapTable('refresh');
     });
     $(document).on('click', ".exportButton",function(){
-        $.fileDownload("/patents/export",{
-            data:{
-                level1:$("#level1").val(),
-                level2:$("#level2").val(),
-                province:$("#province").val(),
-                city:$("#city").val(),
-            },
-            prepareCallback:function(url){
-                // alert("正在导出,请稍后...");
-            },
-            successCallback:function(url){
-                alert("导出完成！");
-            },
-            failCallback:function (html, url) {
-                alert("导出失败，未知的异常。");
-            }
-        });
+        var level1 = $("#level1").val();
+        var level2 = $("#level2").val();
+        var province = $("#province").val();
+        var city = $("#city").val();
+        // console.info($.isEmptyObject(level1));
+        // console.info($.isEmptyObject(level2));
+        // console.info($.isEmptyObject(province));
+        // console.info($.isEmptyObject(city));
+        if (!$.isEmptyObject(level1)
+            && !$.isEmptyObject(level2)
+            && !$.isEmptyObject(province)
+            && !$.isEmptyObject(city) ){
+            $.fileDownload("/patents/export",{
+                data:{
+                    level1:$("#level1").val(),
+                    level2:$("#level2").val(),
+                    province:$("#province").val(),
+                    city:$("#city").val(),
+                },
+                prepareCallback:function(url){
+                    // alert("正在导出,请稍后...");
+                },
+                successCallback:function(url){
+                    $.dialog({
+                        title: '导出',
+                        content: '导出完成!',
+                    })
+                },
+                failCallback:function (html, url) {
+                    $.dialog({
+                        title: '导出',
+                        content: '导出失败,请重试!',
+                    })
+                }
+            });
+        }else {
+            $.dialog({
+                title: '条件选择',
+                content: '请选择专利类型和地区!',
+            })
+        }
+
     });
 
     $(document).ready(function () {
