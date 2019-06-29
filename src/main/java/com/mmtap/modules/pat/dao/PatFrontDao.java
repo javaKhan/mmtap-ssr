@@ -35,10 +35,10 @@ public class PatFrontDao {
             sb.append(" and apply_person_address like  '%" + vo.getCity().trim() + "%' ");
         }
         if (StringUtils.isNotEmpty(vo.getStartYear())) {
-            sb.append(" and apply_date >='" + vo.getStartYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') >='" + vo.getStartYear().trim() + "' ");
         }
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
-            sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" GROUP BY DATE_FORMAT(apply_date,'%Y') order by year ");
         Query query = entityManager.createNativeQuery(sb.toString());
@@ -63,10 +63,10 @@ public class PatFrontDao {
             sb.append(" and apply_person_address like  '%" + vo.getCity().trim() + "%' ");
         }
         if (StringUtils.isNotEmpty(vo.getStartYear())) {
-            sb.append(" and apply_date >='" + vo.getStartYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') >='" + vo.getStartYear().trim() + "' ");
         }
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
-            sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" group by apply_person ");
         sb.append(" LIMIT 50");
@@ -92,10 +92,10 @@ public class PatFrontDao {
             sb.append(" and apply_person_address like  '%" + vo.getCity().trim() + "%' ");
         }
         if (StringUtils.isNotEmpty(vo.getStartYear())) {
-            sb.append(" and apply_date >='" + vo.getStartYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') >='" + vo.getStartYear().trim() + "' ");
         }
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
-            sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" GROUP BY ipctype_no ");
         sb.append(" LIMIT 100");
@@ -120,10 +120,10 @@ public class PatFrontDao {
             sb.append(" and apply_person_address like  '%" + vo.getCity().trim() + "%' ");
         }
         if (StringUtils.isNotEmpty(vo.getStartYear())) {
-            sb.append(" and apply_date >='" + vo.getStartYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') >='" + vo.getStartYear().trim() + "' ");
         }
         if (StringUtils.isNotEmpty(vo.getEndYear())) {
-            sb.append(" and apply_date <='" + vo.getEndYear().trim() + "' ");
+            sb.append(" and DATE_FORMAT(apply_date,'%Y') <='" + vo.getEndYear().trim() + "' ");
         }
         sb.append(" LIMIT 300");
         Query query = entityManager.createNativeQuery(sb.toString());
